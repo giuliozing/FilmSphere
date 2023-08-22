@@ -56,7 +56,6 @@ CREATE TABLE IF NOT EXISTS PLZ.`CartaDiCredito` (
   `CVV`INT NOT NULL,
   `NomeIntestatario` VARCHAR(255) NOT NULL,
    `CognomeIntestatario` VARCHAR(255)  NOT NULL,
-    `Profilo` VARCHAR(3000) NOT NULL,
      `MeseScadenza`INT NOT NULL,
       `AnnoScadenza`INT NOT NULL,
   PRIMARY KEY (`Numero`))
@@ -95,7 +94,7 @@ CREATE TABLE IF NOT EXISTS PLZ.`Contenuto` (
   `Dimensione` BIGINT NOT NULL,
   `Lunghezza` INT NOT NULL,
   `Film` INT NOT NULL,
-  `LinguaAudio` VARCHAR(255),
+  `LinguaAudio` VARCHAR(45),
   `CodificaAudio`INT,
   PRIMARY KEY (`Id`))
 ENGINE = InnoDB DEFAULT CHARSET=latin1;
@@ -131,7 +130,7 @@ CREATE TABLE IF NOT EXISTS PLZ.`Dispositivo` (
   `Id` INT NOT NULL,
   `Nome` VARCHAR(255) NOT NULL,
 `VersioneApp` VARCHAR(45) NOT NULL,
-    `SistemaOperativo` VARCHAR(255) NOT NULL,
+    `SistemaOperativo` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`Id`))
 ENGINE = InnoDB DEFAULT CHARSET=latin1;
 
@@ -163,7 +162,7 @@ CREATE TABLE IF NOT EXISTS PLZ.`Fattura` (
   `Emissione` DATETIME NOT NULL,
   `Utente` INT NOT NULL,
   `CartaDiCredito` INT NOT NULL,
-  `Abbonamento` VARCHAR(255) NOT NULL,
+  `Abbonamento` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`Id`))
 ENGINE = InnoDB DEFAULT CHARSET=latin1;
 
@@ -194,9 +193,9 @@ ENGINE = InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS PLZ.`FormatoAudio` (
   `Codice` INT NOT NULL,
-  `Famiglia` VARCHAR(255) NOT NULL,
+  `Famiglia` VARCHAR(45) NOT NULL,
 `DataRilascio` DATE NOT NULL,
-  `Qualita` VARCHAR(255) NOT NULL,
+  `Qualita` VARCHAR(45) NOT NULL,
 `Bitrate` INT NOT NULL,
   PRIMARY KEY (`Codice`))
 ENGINE = InnoDB DEFAULT CHARSET=latin1;
@@ -208,12 +207,12 @@ ENGINE = InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS PLZ.`FormatoVideo` (
   `Codice` INT NOT NULL,
-  `Famiglia` VARCHAR(255) NOT NULL,
+  `Famiglia` VARCHAR(45) NOT NULL,
 `DataRilascio` DATE NOT NULL,
-  `Qualita` VARCHAR(255) NOT NULL,
+  `Qualita` VARCHAR(45) NOT NULL,
 `Bitrate` INT NOT NULL,
     `Risoluzione` INT NOT NULL,
-    `RapportoAspetto` VARCHAR(255) NOT NULL,
+    `RapportoAspetto` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`Codice`))
 ENGINE = InnoDB DEFAULT CHARSET=latin1;
 
@@ -249,7 +248,7 @@ ENGINE = InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE IF NOT EXISTS PLZ.`OffertaContenuto` (
 
 
-`Abbonamento` VARCHAR(255) NOT NULL,
+`Abbonamento` VARCHAR(45) NOT NULL,
   `Contenuto` INT NOT NULL,
   PRIMARY KEY (`Abbonamento`, `Contenuto`))
 ENGINE = InnoDB DEFAULT CHARSET=latin1;
@@ -262,7 +261,7 @@ ENGINE = InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE IF NOT EXISTS PLZ.`OffertaFunzionalita` (
 
 
-`Abbonamento` VARCHAR(255) NOT NULL,
+`Abbonamento` VARCHAR(45) NOT NULL,
   `Funzionalita` VARCHAR(255) NOT NULL,
   PRIMARY KEY (`Abbonamento`, `Funzionalita`))
 ENGINE = InnoDB DEFAULT CHARSET=latin1;
