@@ -1,3 +1,4 @@
+USE plz;
 -- Vincoli intrarelazionali di n-upla
 -- Artista(Attore) e Artista(Regista) non possono essere entrambi nulli;
 DROP TRIGGER IF EXISTS artista_o_regista;
@@ -12,8 +13,8 @@ BEGIN
     SET MESSAGE_TEXT = 'Attore e Regista non possono essere entrambi nulli'
   END IF
 
-END $$
-DELIMITER;
+END 
+DELIMITER $$;
 
 -- La data definita dagli attributi CartaDiCredito(Mese) e CartaDiCredito(Anno) deve essere futura
 DROP TRIGGER IF EXISTS data_carta_futura;
@@ -28,8 +29,8 @@ BEGIN
     SET MESSAGE_TEXT = 'Carta Scaduta'
   END IF
 
-END $$
-DELIMITER;
+END 
+DELIMITER $$;
 
 -- Paese(InizioIP) deve essere minore di Paese(FineIP)
 DROP TRIGGER IF EXISTS ip_paese;
@@ -44,8 +45,8 @@ BEGIN
     SET MESSAGE_TEXT = 'Paese(InizioIP) deve essere minore di Paese(FineIP)'
   END IF
 
-END $$
-DELIMITER;
+END 
+DELIMITER $$;
 
 --Premio(Attore), Premio(Film), Premio(Regista) non possono essere tutti nulli
 DROP TRIGGER IF EXISTS premio;
@@ -60,8 +61,8 @@ BEGIN
     SET MESSAGE_TEXT = 'Premio(Attore), Premio(Film), Premio(Regista) non possono essere tutti nulli'
   END IF
 
-END $$
-DELIMITER;
+END 
+DELIMITER $$;
 
 --Altri vincoli interrelazionali
 --Un Artista può comparire nella tabella Interpretazione solo se il suo attributo Attore vale 1
@@ -83,8 +84,8 @@ BEGIN
     SET MESSAGE_TEXT = 'Un Artista può comparire nella tabella Interpretazione solo se il suo attributo Attore vale 1'
   END IF
 
-END $$
-DELIMITER;
+END 
+DELIMITER $$;
 
 --Un Artista può comparire nella tabella Direzione solo se il suo attributo Regista vale 1
 DROP TRIGGER IF EXISTS direzione_regista_1;
@@ -105,8 +106,8 @@ BEGIN
     SET MESSAGE_TEXT = 'Un Artista può comparire nella tabella Direzione solo se il suo attributo Regista vale 1'
   END IF
 
-END $$
-DELIMITER;
+END 
+DELIMITER $$;
 
 --Un Artista può comparire nella tabella PremiazioneAttore solo se il suo attributo Attore vale 1
 DROP TRIGGER IF EXISTS premiazione_attore_attore_1;
@@ -127,8 +128,8 @@ BEGIN
     SET MESSAGE_TEXT = 'Un Artista può comparire nella tabella PremiazioneAttore solo se il suo attributo Attore vale 1'
   END IF
 
-END $$
-DELIMITER;
+END 
+DELIMITER $$;
 
 --Un Premio può comparire nella tabella PremiazioneAttore solo se il suo attributo Attore vale 1
 DROP TRIGGER IF EXISTS premiazione_attore_premio_1;
@@ -149,8 +150,8 @@ BEGIN
     SET MESSAGE_TEXT = 'Un Premio può comparire nella tabella PremiazioneAttore solo se il suo attributo Attore vale 1'
   END IF
 
-END $$
-DELIMITER;
+END 
+DELIMITER $$;
 
 --Un Premio può comparire nella tabella PremiazioneFilm solo se il suo attributo Film vale 1
 DROP TRIGGER IF EXISTS premiazione_film_1;
@@ -171,8 +172,8 @@ BEGIN
     SET MESSAGE_TEXT = 'Un Premio può comparire nella tabella PremiazioneFilm solo se il suo attributo Film vale 1'
   END IF
 
-END $$
-DELIMITER;
+END 
+DELIMITER $$;
 
 --Un Artista può comparire nella tabella PremiazioneRegista solo se il suo attributo Regista vale 1
 DROP TRIGGER IF EXISTS premiazione_regista_regista_1;
@@ -193,8 +194,8 @@ BEGIN
     SET MESSAGE_TEXT = 'Un Artista può comparire nella tabella PremiazioneRegista solo se il suo attributo Regista vale 1'
   END IF
 
-END $$
-DELIMITER;
+END 
+DELIMITER $$;
 
 --Un Premio può comparire nella tabella PremiazioneRegista solo se il suo attributo Regista vale 1
 DROP TRIGGER IF EXISTS premiazione_regista_premio_1;
@@ -215,8 +216,8 @@ BEGIN
     SET MESSAGE_TEXT = 'Un Premio può comparire nella tabella PremiazioneRegista solo se il suo attributo Regista vale 1'
   END IF
 
-END $$
-DELIMITER;
+END 
+DELIMITER $$;
 
 
 
