@@ -255,7 +255,7 @@ ENGINE = InnoDB DEFAULT CHARSET=latin1;
 
 
 -- -----------------------------------------------------
--- Tabella OffertaContenuto
+-- Tabella OffertaFunzionalita
 -- -----------------------------------------------------
 
 CREATE TABLE IF NOT EXISTS PLZ.`OffertaFunzionalita` (
