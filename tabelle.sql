@@ -275,8 +275,8 @@ CREATE TABLE IF NOT EXISTS PLZ.`Paese` (
   `Nome` VARCHAR(45) NOT NULL,
   `InizioIP` INT NOT NULL,
   `FineIP` INT NOT NULL,
-  `Latitudine` DECIMAL(6, 6) NOT NULL,
-    `Longitudine` DECIMAL(6, 6) NOT NULL,
+  `Latitudine` DOUBLE NOT NULL,
+    `Longitudine` DOUBLE NOT NULL,
   PRIMARY KEY (`Nome`))
 ENGINE = InnoDB DEFAULT CHARSET=latin1;
 
@@ -413,8 +413,8 @@ CREATE TABLE IF NOT EXISTS PLZ.`Server` (
   `Id` INT NOT NULL,
   `LarghezzaBanda` BIGINT NOT NULL,
    `CapacitaMax` BIGINT NOT NULL,
-  `Latitudine` DECIMAL(6, 6) NOT NULL,
-    `Longitudine` DECIMAL(6, 6) NOT NULL,
+  `Latitudine` DOUBLE NOT NULL,
+    `Longitudine` DOUBLE NOT NULL,
     `Jitter` INT NOT NULL,
     `BandaDisponibile` BIGINT NOT NULL DEFAULT 0,
   PRIMARY KEY (`Id`))
