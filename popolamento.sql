@@ -4405,7 +4405,7 @@ INSERT INTO plz.premiazioneregista VALUES (1,1),
 	(19,'Oscar al miglior film d''animazione',1999,'Academy of Motion Picture Art and Sciences','L''Academy Award, conosciuto anche come premio Oscar o semplicemente Oscar, è il premio cinematografico più prestigioso e antico al mondo, giacché venne assegnato per la prima volta il 16 maggio 1929.',50,0,1,0),
 	(20,'Oscar al migliore attore non protagonista',1995,'Academy of Motion Picture Art and Sciences','L''Academy Award, conosciuto anche come premio Oscar o semplicemente Oscar, è il premio cinematografico più prestigioso e antico al mondo, giacché venne assegnato per la prima volta il 16 maggio 1929.',90,1,0,0);
 
-	-- -----------------------------------------------------
+-- -----------------------------------------------------
 -- Tabella RecensioneCritico
 -- -----------------------------------------------------
 
@@ -4449,3 +4449,25 @@ INSERT INTO plz.premiazioneregista VALUES (1,1),
 	(4,8,'2012-01-12 00:00:00','Non vi è film così cattivo che non abbia qualcosa di buono',4),
 	(4,9,'1994-10-07 00:00:00','Non vi è film così cattivo che non abbia qualcosa di buono',4),
 	(4,10,'2008-04-18 00:00:00','Non vi è film così cattivo che non abbia qualcosa di buono',5);
+
+
+-- -----------------------------------------------------
+-- Tabella RestrizioneAbbonamento
+-- -----------------------------------------------------
+
+	INSERT INTO plz.restrizioneabbonamento VALUES ('Ultimate','Argentina'),
+	('Ultimate','Brasile'),
+	('Ultimate','Cile'),
+	('Ultimate','Cina'),
+	('Ultimate','Colombia'),
+	('Ultimate','Irlanda'),
+	('Ultimate','Liechtenstein'),
+	('Ultimate','Lussemburgo'),
+	('Ultimate','Monaco'),
+	('Ultimate','Messico'),
+	('Ultimate','Australia'),
+	('Ultimate','Nuova Zelanda'),
+	('Ultimate','Svizzera'),
+	('Ultimate','Austria'),
+	('Ultimate','Belgio');
+
