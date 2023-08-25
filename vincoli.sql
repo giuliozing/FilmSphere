@@ -471,17 +471,17 @@ BEFORE INSERT ON Appartenenza FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM Film F
      WHERE F.Id = NEW.Film
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni film in Appartenenza deve comparire nella tabella Film'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni film in Appartenenza deve comparire nella tabella Film';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni contenuto in CodificaVideo deve comparire nella tabella Contenuto
 DROP TRIGGER IF EXISTS codificavideo_contenuto_contenuto;
@@ -493,17 +493,17 @@ BEFORE INSERT ON CodificaVideo FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM Contenuto C
      WHERE C.Id = NEW.Contenuto
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni contenuto in CodificaVideo deve comparire nella tabella Contenuto'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni contenuto in CodificaVideo deve comparire nella tabella Contenuto';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni formato video in CodificaVideo deve comparire nella tabella FormatoVideo
 DROP TRIGGER IF EXISTS codificavideo_formatovideo_formatovideo;
@@ -515,17 +515,17 @@ BEFORE INSERT ON CodificaVideo FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM FormatoVideo F
      WHERE F.Codice = NEW.FormatoVideo
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni formato video in CodificaVideo deve comparire nella tabella FormatoVideo'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni formato video in CodificaVideo deve comparire nella tabella FormatoVideo';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni dispositivo nella tabella Connessione deve comparire nella tabella Dispositivo
 DROP TRIGGER IF EXISTS connessione_dispositivo_dispositivo;
@@ -537,17 +537,17 @@ BEFORE INSERT ON Connessione FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM Dispositivo D
      WHERE D.Id = NEW.Dispositivo
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni dispositivo nella tabella Connessione deve comparire nella tabella Dispositivo'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni dispositivo nella tabella Connessione deve comparire nella tabella Dispositivo';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni utente nella tabella Connessione deve comparire nella tabella Utente
 DROP TRIGGER IF EXISTS connessione_utente_utente;
@@ -559,17 +559,17 @@ BEFORE INSERT ON Connessione FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM Utente U
      WHERE U.Codice = NEW.Utente
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni utente nella tabella Connessione deve comparire nella tabella Utente'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni utente nella tabella Connessione deve comparire nella tabella Utente';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni film nella tabella Contenuto deve comparire nella tabella Film
 DROP TRIGGER IF EXISTS contenuto_film_film;
@@ -581,17 +581,17 @@ BEFORE INSERT ON Contenuto FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM Film F
      WHERE F.Id = NEW.Film
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni film nella tabella Contenuto deve comparire nella tabella Film'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni film nella tabella Contenuto deve comparire nella tabella Film';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni codifica audio nella tabella Contenuto deve comparire nella tabella FormatoAudio
 DROP TRIGGER IF EXISTS contenuto_codificaaudio_formatoaudio;
@@ -603,17 +603,17 @@ BEFORE INSERT ON Contenuto FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM FormatoAudio F
      WHERE F.Codice = NEW.CodificaAudio
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni codifica audio nella tabella Contenuto deve comparire nella tabella FormatoAudio'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni codifica audio nella tabella Contenuto deve comparire nella tabella FormatoAudio';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni film nella tabella Direzione deve comparire nella tabella Film
 DROP TRIGGER IF EXISTS direzione_film_film;
@@ -625,17 +625,17 @@ BEFORE INSERT ON Direzione FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM Film F
      WHERE F.Id = NEW.Film
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni film nella tabella Direzione deve comparire nella tabella Film'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni film nella tabella Direzione deve comparire nella tabella Film';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni artista nella tabella Direzione deve comparire nella tabella Artista
 DROP TRIGGER IF EXISTS direzione_artista_artista;
@@ -647,17 +647,17 @@ BEFORE INSERT ON Direzione FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM Artista A
      WHERE A.Id = NEW.Artista
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni artista nella tabella Direzione deve comparire nella tabella Artista'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni artista nella tabella Direzione deve comparire nella tabella Artista';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni contenuto nella tabella Erogazione deve comparire nella tabella Contenuto
 DROP TRIGGER IF EXISTS erogazione_contenuto_contenuto;
@@ -669,17 +669,17 @@ BEFORE INSERT ON Erogazione FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM Contenuto C
      WHERE C.Id = NEW.Contenuto
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni contenuto nella tabella Erogazione deve comparire nella tabella Contenuto'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni contenuto nella tabella Erogazione deve comparire nella tabella Contenuto';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni server nella tabella Erogazione deve comparire nella tabella Server
 DROP TRIGGER IF EXISTS erogazione_server_server;
@@ -691,17 +691,17 @@ BEFORE INSERT ON Erogazione FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM Server S
      WHERE S.Id = NEW.Server
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni server nella tabella Erogazione deve comparire nella tabella Server'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni server nella tabella Erogazione deve comparire nella tabella Server';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni timestamp di inzio connessione nella tabella Erogazione deve comparire nella tabella Connessione
 DROP TRIGGER IF EXISTS erogazione_inizioconnessione_connessione;
@@ -713,17 +713,17 @@ BEFORE INSERT ON Erogazione FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM Connessione C
      WHERE C.Inizio = NEW.InizioConnessione
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni timestamp di inzio connessione nella tabella Erogazione deve comparire nella tabella Connessione'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni timestamp di inzio connessione nella tabella Erogazione deve comparire nella tabella Connessione';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni dispositivo nella tabella Erogazione deve comparire nella tabella Dispositivo
 DROP TRIGGER IF EXISTS erogazione_dispositivo_dispositivo;
@@ -735,17 +735,17 @@ BEFORE INSERT ON Erogazione FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM Dispositivo D
      WHERE D.Id = NEW.Dispositivo
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni dispositivo nella tabella Erogazione deve comparire nella tabella Dispositivo'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni dispositivo nella tabella Erogazione deve comparire nella tabella Dispositivo';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni utente nella tabella Fattura deve comparire nella tabella Utente
 DROP TRIGGER IF EXISTS fattura_utente_utente;
@@ -757,17 +757,17 @@ BEFORE INSERT ON Fattura FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM Utente U
      WHERE U.Codice = NEW.Utente
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni utente nella tabella Fattura deve comparire nella tabella Utente'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni utente nella tabella Fattura deve comparire nella tabella Utente';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni carta di credito nella tabella Fattura deve comparire nella tabella CartaDiCredito
 DROP TRIGGER IF EXISTS fattura_cartadicredito_cartadicredito;
@@ -779,17 +779,17 @@ BEFORE INSERT ON Fattura FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM CartaDiCredito C
      WHERE C.Numero = NEW.CartaDiCredito
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni carta di credito nella tabella Fattura deve comparire nella tabella CartaDiCredito'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni carta di credito nella tabella Fattura deve comparire nella tabella CartaDiCredito';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni abbonamento nella tabella Fattura deve comparire nella tabella Abbonamento
 DROP TRIGGER IF EXISTS fattura_abbonamento_abbonamento;
@@ -801,17 +801,17 @@ BEFORE INSERT ON Fattura FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM Abbonamento A
      WHERE A.Nome = NEW.Abbonamento
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni abbonamento nella tabella Fattura deve comparire nella tabella Abbonamento'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni abbonamento nella tabella Fattura deve comparire nella tabella Abbonamento';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni paese nella tabella Film deve comparire nella tabella Paese
 DROP TRIGGER IF EXISTS film_paese_paese;
@@ -823,17 +823,17 @@ BEFORE INSERT ON Film FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM Paese P
      WHERE P.Nome = NEW.Paese
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni paese nella tabella Film deve comparire nella tabella Paese'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni paese nella tabella Film deve comparire nella tabella Paese';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni utente nella tabella Importanza deve comparire nella tabella Utente
 DROP TRIGGER IF EXISTS importanza_utente_utente;
@@ -845,17 +845,17 @@ BEFORE INSERT ON Importanza FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM Utente U
      WHERE U.Codice = NEW.Utente
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni utente nella tabella Importanza deve comparire nella tabella Utente'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni utente nella tabella Importanza deve comparire nella tabella Utente';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni artista nella tabella Interpretazione deve comparire nella tabella Artista
 DROP TRIGGER IF EXISTS interpretazione_artista_artista;
@@ -867,17 +867,17 @@ BEFORE INSERT ON Interpretazione FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM Artista A
      WHERE A.Id = NEW.Artista
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni artista nella tabella Interpretazione deve comparire nella tabella Artista'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni artista nella tabella Interpretazione deve comparire nella tabella Artista';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni film nella tabella Interpretazione deve comparire nella tabella Film
 DROP TRIGGER IF EXISTS interpretazione_film_film;
@@ -889,17 +889,17 @@ BEFORE INSERT ON Interpretazione FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM Film F
      WHERE F.Id = NEW.Film
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni film nella tabella Interpretazione deve comparire nella tabella Film'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni film nella tabella Interpretazione deve comparire nella tabella Film';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni abbonamento nella tabella OffertaContenuto deve comparire nella tabella Abbonamento
 DROP TRIGGER IF EXISTS offertacontenuto_abbonamento_abbonamento;
@@ -911,17 +911,17 @@ BEFORE INSERT ON OffertaContenuto FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM Abbonamento A
      WHERE A.Nome = NEW.Abbonamento
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni abbonamento nella tabella OffertaContenuto deve comparire nella tabella Abbonamento'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni abbonamento nella tabella OffertaContenuto deve comparire nella tabella Abbonamento';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni contenuto nella tabella OffertaContenuto deve comparire nella tabella Contenuto
 DROP TRIGGER IF EXISTS offertacontenuto_contenuto_contenuto;
@@ -933,17 +933,17 @@ BEFORE INSERT ON OffertaContenuto FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM Contenuto C
      WHERE C.Id = NEW.Contenuto
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni contenuto nella tabella OffertaContenuto deve comparire nella tabella Contenuto'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni contenuto nella tabella OffertaContenuto deve comparire nella tabella Contenuto';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni abbonamento nella tabella OffertaFunzionalità deve comparire nella tabella Abbonamento
 DROP TRIGGER IF EXISTS offertafunzionalità_abbonamento_abbonamento;
@@ -955,17 +955,17 @@ BEFORE INSERT ON OffertaFunzionalita FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM Abbonamento A
      WHERE A.Nome = NEW.Abbonamento
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni abbonamento nella tabella OffertaFunzionalità deve comparire nella tabella Abbonamento'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni abbonamento nella tabella OffertaFunzionalità deve comparire nella tabella Abbonamento';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni contenuto nella tabella PossessoServer deve comparire nella tabella Contenuto
 DROP TRIGGER IF EXISTS possessoserver_contenuto_contenuto;
@@ -977,17 +977,17 @@ BEFORE INSERT ON PossessoServer FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM Contenuto C
      WHERE C.Id = NEW.Contenuto
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni contenuto nella tabella PossessoServer deve comparire nella tabella Contenuto'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni contenuto nella tabella PossessoServer deve comparire nella tabella Contenuto';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni server nella tabella PossessoServer deve comparire nella tabella Server
 DROP TRIGGER IF EXISTS possessoserver_server_server;
@@ -999,17 +999,17 @@ BEFORE INSERT ON PossessoServer FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM Server S
      WHERE S.Id = NEW.Server
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni server nella tabella PossessoServer deve comparire nella tabella Server'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni server nella tabella PossessoServer deve comparire nella tabella Server';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni artista nella tabella PremiazioneAttore deve comparire nella tabella Artista
 DROP TRIGGER IF EXISTS premiazioneattore_artista_artista;
@@ -1021,17 +1021,17 @@ BEFORE INSERT ON PremiazioneAttore FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM Artista A
-     WHERE A.Id = NEW.Artista
+     WHERE A.Id = NEW.Attore
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni artista nella tabella PremiazioneAttore deve comparire nella tabella Artista'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni artista nella tabella PremiazioneAttore deve comparire nella tabella Artista';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni premio nella tabella PremiazioneAttore deve comparire nella tabella Premio
 DROP TRIGGER IF EXISTS premiazioneattore_premio_premio;
@@ -1043,17 +1043,17 @@ BEFORE INSERT ON PremiazioneAttore FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM Premio P
      WHERE P.Id = NEW.Premio
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni premio nella tabella PremiazioneAttore deve comparire nella tabella Premio'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni premio nella tabella PremiazioneAttore deve comparire nella tabella Premio';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni film nella tabella PremiazioneFilm deve comparire nella tabella Film
 DROP TRIGGER IF EXISTS premiazionefilm_film_film;
@@ -1065,17 +1065,17 @@ BEFORE INSERT ON PremiazioneFilm FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM Film F
      WHERE F.Id = NEW.Film
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni film nella tabella PremiazioneFilm deve comparire nella tabella Film'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni film nella tabella PremiazioneFilm deve comparire nella tabella Film';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni premio nella tabella PremiazioneFilm deve comparire nella tabella Premio
 DROP TRIGGER IF EXISTS premiazionefilm_premio_premio;
@@ -1087,17 +1087,17 @@ BEFORE INSERT ON PremiazioneFilm FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM Premio P
      WHERE P.Id = NEW.Premio
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni premio nella tabella PremiazioneFilm deve comparire nella tabella Premio'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni premio nella tabella PremiazioneFilm deve comparire nella tabella Premio';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni artista nella tabella PremiazioneRegista deve comparire nella tabella Artista
 DROP TRIGGER IF EXISTS premiazioneregista_artista_artista;
@@ -1109,17 +1109,17 @@ BEFORE INSERT ON PremiazioneRegista FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM Artista A
-     WHERE A.Id = NEW.Artista
+     WHERE A.Id = NEW.Regista
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni artista nella tabella PremiazioneRegista deve comparire nella tabella Artista'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni artista nella tabella PremiazioneRegista deve comparire nella tabella Artista';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni premio nella tabella PremiazioneRegista deve comparire nella tabella Premio
 DROP TRIGGER IF EXISTS premiazioneregista_premio_premio;
@@ -1131,17 +1131,17 @@ BEFORE INSERT ON PremiazioneRegista FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM Premio P
      WHERE P.Id = NEW.Premio
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni premio nella tabella PremiazioneRegista deve comparire nella tabella Premio'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni premio nella tabella PremiazioneRegista deve comparire nella tabella Premio';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni critico nella tabella RecensioneCritico deve comparire nella tabella Critico
 DROP TRIGGER IF EXISTS recensionecritico_critico_critico;
@@ -1153,17 +1153,17 @@ BEFORE INSERT ON RecensioneCritico FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM Critico C
      WHERE C.Id = NEW.Critico
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni critico nella tabella RecensioneCritico deve comparire nella tabella Critico'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni critico nella tabella RecensioneCritico deve comparire nella tabella Critico';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni film nella tabella RecensioneCritico deve comparire nella tabella Film
 DROP TRIGGER IF EXISTS recensionecritico_film_film;
@@ -1175,17 +1175,17 @@ BEFORE INSERT ON RecensioneCritico FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM Film F
      WHERE F.Id = NEW.Film
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni film nella tabella RecensioneCritico deve comparire nella tabella Film'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni film nella tabella RecensioneCritico deve comparire nella tabella Film';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni utente nella tabella RecensioneUtente deve comparire nella tabella Utente
 DROP TRIGGER IF EXISTS recensioneutente_utente_utente;
@@ -1197,17 +1197,17 @@ BEFORE INSERT ON RecensioneUtente FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM Utente U
      WHERE U.Codice = NEW.Utente
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni utente nella tabella RecensioneUtente deve comparire nella tabella Utente'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni utente nella tabella RecensioneUtente deve comparire nella tabella Utente';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni film nella tabella RecensioneUtente deve comparire nella tabella Film
 DROP TRIGGER IF EXISTS recensioneutente_film_film;
@@ -1219,17 +1219,17 @@ BEFORE INSERT ON RecensioneUtente FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM Film F
      WHERE F.Id = NEW.Film
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni film nella tabella RecensioneUtente deve comparire nella tabella Film'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni film nella tabella RecensioneUtente deve comparire nella tabella Film';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni abbonamento nella tabella RestrizioneAbbonamento deve comparire nella tabella Abbonamento
 DROP TRIGGER IF EXISTS restrizioneabbonamento_abbonamento_abbonamento;
@@ -1241,17 +1241,17 @@ BEFORE INSERT ON RestrizioneAbbonamento FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM Abbonamento A
      WHERE A.Nome = NEW.Abbonamento
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni abbonamento nella tabella RestrizioneAbbonamento deve comparire nella tabella Abbonamento'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni abbonamento nella tabella RestrizioneAbbonamento deve comparire nella tabella Abbonamento';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni paese nella tabella RestrizioneAbbonamento deve comparire nella tabella Paese
 DROP TRIGGER IF EXISTS restrizioneabbonamento_paese_paese;
@@ -1263,17 +1263,17 @@ BEFORE INSERT ON RestrizioneAbbonamento FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM Paese P
      WHERE P.Nome = NEW.Paese
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni paese nella tabella RestrizioneAbbonamento deve comparire nella tabella Paese'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni paese nella tabella RestrizioneAbbonamento deve comparire nella tabella Paese';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni contenuto nella tabella RestrizioneContenuto deve comparire nella tabella Contenuto
 DROP TRIGGER IF EXISTS restrizionecontenuto_contenuto_contenuto;
@@ -1285,17 +1285,17 @@ BEFORE INSERT ON RestrizioneContenuto FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM Contenuto C
      WHERE C.Id = NEW.Contenuto
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni contenuto nella tabella RestrizioneContenuto deve comparire nella tabella Contenuto'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni contenuto nella tabella RestrizioneContenuto deve comparire nella tabella Contenuto';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni paese nella tabella RestrizioneContenuto deve comparire nella tabella Paese
 DROP TRIGGER IF EXISTS restrizionecontenuto_paese_paese;
@@ -1307,17 +1307,17 @@ BEFORE INSERT ON RestrizioneContenuto FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM Paese P
      WHERE P.Nome = NEW.Paese
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni paese nella tabella RestrizioneContenuto deve comparire nella tabella Paese'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni paese nella tabella RestrizioneContenuto deve comparire nella tabella Paese';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni contenuto nella tabella Sottotitoli deve comparire nella tabella Contenuto
 DROP TRIGGER IF EXISTS sottotitoli_contenuto_contenuto;
@@ -1329,17 +1329,17 @@ BEFORE INSERT ON Sottotitoli FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM Contenuto C
      WHERE C.Id = NEW.Contenuto
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni contenuto nella tabella Sottotitoli deve comparire nella tabella Contenuto'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni contenuto nella tabella Sottotitoli deve comparire nella tabella Contenuto';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni nazionalità nella tabella Utente deve comparire nella tabella Paese
 DROP TRIGGER IF EXISTS utente_nazionalita_paese;
@@ -1351,17 +1351,17 @@ BEFORE INSERT ON Utente FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM Paese P
-     WHERE P.Nome = NEW.Nazionalità
+     WHERE P.Nome = NEW.Nazionalita
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni nazionalità nella tabella Utente deve comparire nella tabella Paese'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni nazionalità nella tabella Utente deve comparire nella tabella Paese';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
 
 -- Ogni carta di credito nella tabella Utente deve comparire nella tabella CartaDiCredito
 DROP TRIGGER IF EXISTS utente_cartadicredito_cartadicredito;
@@ -1373,14 +1373,14 @@ BEFORE INSERT ON Utente FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
   SET temp = 
-    (SELECT COUNT (*)
+    (SELECT COUNT(*)
      FROM CartaDiCredito C
      WHERE C.Numero= NEW.CartaDiCredito
     );
-  IF temp == 0 THEN
+  IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni carta di credito nella tabella Utente deve comparire nella tabella CartaDiCredito'
-  END IF
+    SET MESSAGE_TEXT = 'Ogni carta di credito nella tabella Utente deve comparire nella tabella CartaDiCredito';
+  END IF;
 
-END 
-DELIMITER $$;
+END $$
+DELIMITER ;
