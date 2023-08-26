@@ -92,7 +92,27 @@ DROP PROCEDURE IF EXISTS emissione_fattura;
 
 DELIMITER $$
 
-DELIMITER;
+CREATE PROCEDURE emissione_fattura(in _utente int, out _check tinyint(1))
+begin
+    DECLARE abbonamento VARCHAR(45);
+    DECLARE carta_di_credito BIGINT;
+    DECLARE mese_scadenza INT;
+    DECLARE anno_scadenza INT;
+    DECLARE max_id INT;
+    -- recuperiamo i dati di abbonamento e carta di credito associati all'utente
+    select Nome, CartaDiCredito from plz.utente where Codice=_utente into abbonamento, carta_di_credito;
+    -- verifichiamo che la carta di credito non sia scaduta
+    select MeseScadenza, AnnoScadenza from cartadicredito where Numero=carta_di_credito into mese_scadenza, anno_scadenza;
+    if anno_scadenza<year(current_date) or (anno_scadenza=year(current_date)and mese_scadenza<month(current_date))
+        then set _check=false;
+    else
+        select max(Id) from fattura into max_id;
+        insert into fattura values(max_id+1, null, current_date+interval 30 day, current_date, _utente, carta_di_credito, abbonamento);
+        set _check = true;
+    end if;
+end $$
+
+DELIMITER ;
 
 
 -- -----------------------------------------------------
