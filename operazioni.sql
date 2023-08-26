@@ -1,4 +1,38 @@
+-- Lorenzo Leoncini, Giulio Zingrillo. Progetto di Basi di Dati 2023
+
+-- Questo script implementa le operazioni sui dati descritte nella sezione 4 della Documentazione.
+
 USE plz;
+
+-- -----------------------------------------------------
+-- Operazione 1: Rating Assoluto, o Valutazione
+-- -----------------------------------------------------
+
+
+DROP PROCEDURE IF EXISTS rating_assoluto;
+
+DELIMITER $$
+
+CREATE PROCEDURE rating_assoluto (IN _idfilm INT, OUT _rating INT)
+	BEGIN
+		DECLARE mediacritica, mediautenti, fasciapremialita, sommapesi, fasciaviews, visualizzazioni, fasciapremialitaregisti, fasciaviewsregisti, numregisti INT;
+        SET mediacritica = (SELECT AVG(R.Voto) FROM Recensionecritico R WHERE R.Film = _idfilm);
+        SET mediautenti = (SELECT AVG(R.Voto) FROM Recensioneutente R WHERE R.Film = _idfilm);
+        SET sommapesi = (SELECT sum(P.Pesi) FROM Premio P WHERE P.Id IN (SELECT P1.Premio FROM PremiazioneFilm P1 WHERE P1.Film = _idfilm));
+        SET visualizzazioni = (SELECT F.Visualizzazioni FROM Film F WHERE F.Id = _idfilm);
+        SET numregisti = (SELECT COUNT(*) FROM Direzione D WHERE D.Film = _idfilm);
+        SET fasciapremialitaregisti = (SELECT SUM(P.Pesi) FROM Premio P WHERE P.Id IN (SELECT P1.Premio FROM PremiazioneRegista P1 WHERE P1.Regista IN (SELECT D.Artista FROM Direzione D WHERE D.Film = _idfilm)));
+        SET fasciaviewsregisti = (SELECT SUM(F.Visualizzazioni) FROM Film F WHERE F.Id IN (SELECT D.Film FROM Direzione D WHERE D.Artista IN (SELECT D.Artista FROM Direzione D WHERE D.Film = _idfilm)));
+        
+    END $$
+DELIMITER ;
+
+
+-- -----------------------------------------------------
+-- Operazione 6: Registrazione di un Utente
+-- -----------------------------------------------------
+
+
 DROP PROCEDURE IF EXISTS registrazione_utente;
 
 DELIMITER $$
@@ -19,6 +53,10 @@ CREATE PROCEDURE registrazione_utente (IN _nome VARCHAR(255), _cognome VARCHAR(2
 		END IF;
     END $$
 DELIMITER ;
+
+-- -----------------------------------------------------
+-- Operazione 7: Sottoscrizione del Servizio da parte di un utente
+-- -----------------------------------------------------
 
 DROP PROCEDURE IF EXISTS sottoscrizione_servizio;
 
@@ -46,6 +84,21 @@ CREATE PROCEDURE sottoscrizione_servizio (IN _codice INT, _abbonamento VARCHAR(4
     END $$
 DELIMITER ;
 
+-- -----------------------------------------------------
+-- Operazione 8: Emissione di una Fattura
+-- -----------------------------------------------------
+
+DROP PROCEDURE IF EXISTS emissione_fattura;
+
+DELIMITER $$
+
+DELIMITER;
+
+
+-- -----------------------------------------------------
+-- Operazione 14: Fine Erogazione
+-- -----------------------------------------------------
+
 DROP PROCEDURE IF EXISTS fine_erogazione;
 
 DELIMITER $$
@@ -58,20 +111,4 @@ CREATE PROCEDURE fine_erogazione (IN _id INT, _fine DATETIME)
     END $$
 DELIMITER ;
 
-DROP PROCEDURE IF EXISTS rating_assoluto;
 
-DELIMITER $$
-
-CREATE PROCEDURE rating_assoluto (IN _idfilm INT, OUT _rating INT)
-	BEGIN
-		DECLARE mediacritica, mediautenti, fasciapremialita, sommapesi, fasciaviews, visualizzazioni, fasciapremialitaregisti, fasciaviewsregisti, numregisti INT;
-        SET mediacritica = (SELECT AVG(R.Voto) FROM Recensionecritico R WHERE R.Film = _idfilm);
-        SET mediautenti = (SELECT AVG(R.Voto) FROM Recensioneutente R WHERE R.Film = _idfilm);
-        SET sommapesi = (SELECT sum(P.Pesi) FROM Premio P WHERE P.Id IN (SELECT P1.Premio FROM PremiazioneFilm P1 WHERE P1.Film = _idfilm));
-        SET visualizzazioni = (SELECT F.Visualizzazioni FROM Film F WHERE F.Id = _idfilm);
-        SET numregisti = (SELECT COUNT(*) FROM Direzione D WHERE D.Film = _idfilm);
-        SET fasciapremialitaregisti = (SELECT SUM(P.Pesi) FROM Premio P WHERE P.Id IN (SELECT P1.Premio FROM PremiazioneRegista P1 WHERE P1.Regista IN (SELECT D.Artista FROM Direzione D WHERE D.Film = _idfilm)));
-        SET fasciaviewsregisti = (SELECT SUM(F.Visualizzazioni) FROM Film F WHERE F.Id IN (SELECT D.Film FROM Direzione D WHERE D.Artista IN (SELECT D.Artista FROM Direzione D WHERE D.Film = _idfilm)));
-        
-    END $$
-DELIMITER ;

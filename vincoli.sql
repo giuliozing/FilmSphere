@@ -1,3 +1,7 @@
+-- Lorenzo Leoncini, Giulio Zingrillo. Progetto di Basi di Dati 2023
+
+-- Questo script definisce i trigger che implementano i vincoli del database.
+
 USE plz;
 -- Vincoli intrarelazionali di dominio
 -- Numero Carta di Credito
