@@ -447,6 +447,7 @@ CREATE TABLE IF NOT EXISTS PLZ.`Utente` (
     `Nazionalita` VARCHAR(45) NOT NULL,
     `CartaDiCredito` BIGINT NOT NULL,
     `Abbonamento` VARCHAR(45),
+    `Inizio` DATE,
   PRIMARY KEY (`Codice`))
 ENGINE = InnoDB DEFAULT CHARSET=latin1;
 
