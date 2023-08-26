@@ -161,7 +161,7 @@ CREATE TABLE IF NOT EXISTS PLZ.`Fattura` (
   `Scadenza` DATETIME NOT NULL,
   `Emissione` DATETIME NOT NULL,
   `Utente` INT NOT NULL,
-  `CartaDiCredito` INT NOT NULL,
+  `CartaDiCredito` BIGINT NOT NULL,
   `Abbonamento` VARCHAR(45) NOT NULL,
   PRIMARY KEY (`Id`))
 ENGINE = InnoDB DEFAULT CHARSET=latin1;
