@@ -45,3 +45,15 @@ CREATE PROCEDURE sottoscrizione_servizio (IN _codice INT, _abbonamento VARCHAR(4
 		END IF;
 	END $$
 DELIMITER ;
+
+DROP PROCEDURE IF EXISTS fine_erogazione;
+
+DELIMITER $$
+
+CREATE PROCEDURE fine_erogazione (IN _id INT, _fine DATETIME)
+	BEGIN
+		UPDATE Erogazione E
+        SET E.Fine = _fine
+        WHERE E.Id = _id;
+    END $$
+DELIMITER ;
