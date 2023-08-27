@@ -37,4 +37,3 @@ begin
         end if;
     end loop;
 end;
-select * from fattura order by Id desc 
