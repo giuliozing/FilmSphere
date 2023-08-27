@@ -12,7 +12,7 @@ USE plz;
 
 drop event if exists rinnova_abbonamento;
 create event rinnova_abbonamento
-on schedule every 1 day starts current_date do
+on schedule every 1 day starts '2023-09-30 03:00:00' do
 begin
     declare _user int;
     declare _abbonamento varchar(45);

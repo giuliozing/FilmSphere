@@ -114,6 +114,60 @@ end $$
 
 DELIMITER ;
 
+-- -----------------------------------------------------
+-- Operazione 12: Lingue per tempo di fruizione, come audio e come sottotitoli
+-- -----------------------------------------------------
+
+
+DROP PROCEDURE IF EXISTS lingue_analytics;
+
+DELIMITER $$
+
+CREATE PROCEDURE lingue_analytics()
+BEGIN
+with fruizione_trimestre_precedente_sottotitoli as(
+        select Lingua, sum(timediff( Fine, Inizio)) as sottotitoli_prec
+        from erogazione natural join sottotitoli s
+        where erogazione.Inizio +interval 3 month < current_date
+        and erogazione.inizio + interval 6 month >= current_date
+        group by Lingua
+        ),
+    fruizione_trimestre_precedente_audio as (
+        select c.LinguaAudio as Lingua, sum(timediff(e.Fine, e.Inizio)) as audio_prec
+        from erogazione e inner join contenuto c on e.Contenuto = c.Id
+        where e.Inizio +interval 3 month < current_date
+        and e.inizio + interval 6 month >= current_date
+        and c.LinguaAudio is not null
+        group by  c.LinguaAudio
+        ),
+    fruizione_trimestre_attuale_sottotitoli as(
+        select Lingua, sum(timediff(Fine, Inizio)) as sottotitoli_attuali
+        from erogazione natural join sottotitoli s
+        where erogazione.Inizio +interval 3 month >= current_date
+        and erogazione.Fine is not null
+        group by Lingua
+        ),
+    fruizione_trimestre_attuale_audio as (
+        select c.LinguaAudio as Lingua, sum(timediff(e.Fine, e.Inizio)) as audio_attuale
+        from erogazione e inner join contenuto c on e.Contenuto = c.Id
+        where e.Inizio +interval 3 month >= current_date
+        and e.Fine is not null
+        and c.LinguaAudio is not null
+        group by  c.LinguaAudio)
+    select Lingua, sottotitoli_attuali/3600 as ore_riproduzione_sottotitoli, audio_attuale/3600 as ore_riproduzione_audio,
+           (sottotitoli_attuali/sottotitoli_prec -1)*100 as incremento_percentuale_sottotitoli, ((audio_attuale/audio_prec) -1)*100 as incremento_percentuale_audio from
+    fruizione_trimestre_attuale_audio
+    natural  join fruizione_trimestre_attuale_sottotitoli
+    natural join fruizione_trimestre_precedente_audio
+    natural join fruizione_trimestre_precedente_sottotitoli;
+END $$
+
+
+
+
+
+
+
 
 -- -----------------------------------------------------
 -- Operazione 14: Fine Erogazione
