@@ -22,6 +22,7 @@ begin
     declare _fine tinyint(1) default 0;
     declare c cursor for select Codice from plz.utente where day(utente.Inizio)=day(current_date);
     declare continue handler for not found set _fine = 1;
+    open c;
     scan: loop
         fetch c into _user;
         select Abbonamento, Inizio from utente where Codice = _user into _abbonamento, _inizio;
@@ -35,4 +36,5 @@ begin
             then leave scan;
         end if;
     end loop;
+    close c;
 end;

@@ -369,7 +369,186 @@ DELIMITER ;
 -- -----------------------------------------------------
 
 
-DROP PROCEDURE IF EXISTS raccomandazione_contenuti;
+drop procedure if exists raccomandazione_contenuti;
+delimiter $$
+create procedure raccomandazione_contenuti(in _utente INT, in _n INT)
+begin
+    declare finito tinyint(1) default 0;
+    declare _film, fatture_inevase, visualizzazioni_totali int default 0;
+    declare c_storico_genere, c_storico_attori, c_storico_registi, c_storico_paese, media_cs double default 0;
+    -- individuiamo preliminarmente i film target, che possono essere restituiti dalla procedura
+    declare c cursor for
+        with LingueAudioVisualizzazioni as (
+            select LinguaAudio, count(*) as Visualizzazioni
+            from contenuto c
+            inner join erogazione e on c.Id = e.Contenuto
+            inner join connessione c3 on e.Dispositivo = c3.Dispositivo and e.Inizio = c3.Inizio
+            where Utente = _utente
+            and LinguaAudio is not null
+            group by LinguaAudio
+        ),
+        LingueAudioTarget as (
+            select LinguaAudio
+            from LingueAudioVisualizzazioni
+            where Visualizzazioni/(select sum(Visualizzazioni) from LingueAudioVisualizzazioni ) >0.05
+        ),
+        LinguaSottotitoliVisualizzazioni as (
+            select Lingua, count(*) as Visualizzazioni
+            from contenuto c
+            inner join erogazione e on c.Id = e.Contenuto
+            inner join connessione c3 on e.Dispositivo = c3.Dispositivo and e.Inizio = c3.Inizio
+            inner join sottotitoli s2 on e.Contenuto = s2.Contenuto
+            where Utente = _utente
+            group by Lingua
+        ),
+        LinguaSottotitoliTarget as (
+            select Lingua
+            from LinguaSottotitoliVisualizzazioni
+            where Visualizzazioni/(select sum(Visualizzazioni) from LinguaSottotitoliVisualizzazioni ) >0.05
+        )
+        select distinct Id
+        from film f
+        where not exists(
+            -- nessun contenuto del film deve essere soggetto a restrizioni nel Paese di residenza dell'utente
+            select *
+            from contenuto c inner join restrizionecontenuto r
+            on c.Id = r.Contenuto
+            where c.Film= f.Id
+            and r.Paese = (
+                select Nazionalita
+                from plz.utente u
+                where u.Codice = _utente
+                )
+        )
+    and not exists (
+    -- il contenuto non deve mai essere stato visualizzato dall'utente
+        select *
+        from contenuto c inner join erogazione e
+        on c.Id = e.Contenuto
+        inner join connessione c2 on e.Dispositivo = c2.Dispositivo and e.Inizio = c2.Inizio
+        where c.Film = f.Id
+        and c2.Utente = _utente
+        )
+    and exists (
+        -- deve esistere un contenuto rappresentante il film che sia disponibile nel piano di abbonamento dell'utente
+        select *
+        from contenuto c inner join offertacontenuto o on c.Id = o.Contenuto
+        where c.Film = f.Id
+        and o.Abbonamento = (
+            select Abbonamento
+            from utente u2
+            where u2.Codice = _utente
+            )
+        )
+    and exists (
+        -- deve esistere un contenuto rappresentante il film che sia relativo una lingua audio target
+        select *
+        from contenuto c where c.Film = f.Id
+        and c.LinguaAudio in (select * from LingueAudioTarget)
+        )
+    and exists(
+    -- deve esistere un contenuto rappresentante il film che sia relativo una lingua audio target
+        select *
+        from contenuto c inner join sottotitoli s on c.Id = s.Contenuto
+        where c.Film = f.Id
+        and s.Lingua in (select * from LinguaSottotitoliTarget)
+        );
+    declare continue handler for not found set finito=1;
+
+    -- verifichiamo che l'utente sia in regola con i pagamenti
+    select count(*) into fatture_inevase
+    from fattura
+    where Utente = _utente
+    and Saldo is null
+    and current_date>Scadenza;
+    if fatture_inevase > 0
+        then select  'Utente non in regola con i pagamenti';
+    else
+        select count(*) into visualizzazioni_totali from contenuto c inner join erogazione e on c.Id = e.Contenuto
+            inner join connessione conn on conn.Inizio = e.Inizio
+            and conn.Dispositivo = e.Dispositivo
+            where conn.Utente = 1;
+            create table `Provvisoria`(
+                `Film` INT NOT NULL,
+            `Storico` DOUBLE NOT NULL,
+            PRIMARY KEY (`Film`)
+            );
+        open c;
+        scan: loop
+            fetch c into _film;
+            -- coefficiente di storico genere: individuo la percentuale di visualizzazioni, da parte dell'utente, di film che appartengono al genere del film target
+            select count(*)/visualizzazioni_totali into c_storico_genere
+            from contenuto c inner join erogazione e on c.Id = e.Contenuto
+            inner join connessione conn on conn.Inizio = e.Inizio
+            and conn.Dispositivo = e.Dispositivo
+            inner join appartenenza a on a.Film = c.Film
+            where a.Genere in (select Genere from appartenenza a2 where a2.Film = _film)
+            and conn.Utente = _utente;
+            -- coefficiente di storico attori: individuo la percentuale di visualizzazioni, da parte dell'utente, di film interpretati dagli attori del film in esame
+            with visualizzazioni_totali_attori as (
+                select i.Artista, count(*) as Visualizzazioni
+                from contenuto c inner join erogazione e on c.Id = e.Contenuto
+                inner join connessione conn on conn.Inizio = e.Inizio
+                and conn.Dispositivo = e.Dispositivo
+                inner join interpretazione i on c.Film = i.Film
+                where conn.Utente = _utente
+                group by i.Artista
+            ),
+            visualizzazioni_percentuali as (
+                select Artista, Visualizzazioni/(select sum(Visualizzazioni) from visualizzazioni_totali_attori) as visPerc
+                from visualizzazioni_totali_attori
+                group by Artista
+                )
+            select ifnull(0, sum(visPerc)) into c_storico_attori
+            from visualizzazioni_percentuali natural join interpretazione i where i.Film = _film;
+
+            -- coefficiente di storico registi: individuo la percentuale di visualizzazioni, da parte dell'utente, di film diretti dai registi del film in esame
+            with visualizzazioni_totali_registi as (
+                select d.Artista, count(*) as Visualizzazioni
+                from contenuto c inner join erogazione e on c.Id = e.Contenuto
+                inner join connessione conn on conn.Inizio = e.Inizio
+                and conn.Dispositivo = e.Dispositivo
+                inner join direzione d on c.Film = d.Film
+                where conn.Utente = _utente
+                group by d.Artista
+            ),
+            visualizzazioni_percentuali as (
+                select Artista, Visualizzazioni/(select sum(Visualizzazioni) from visualizzazioni_totali_registi) as visPerc
+                from visualizzazioni_totali_registi
+                group by Artista
+                )
+            select ifnull(0, sum(visPerc)) into c_storico_registi
+            from visualizzazioni_percentuali natural join direzione d where d.Film = _film;
+
+             -- coefficiente di storico Paesi: individuo la percentuale di visualizzazioni, da parte dell'utente, di film prodotti nello stesso Paese del film in esame
+            select count(*)/visualizzazioni_totali into c_storico_paese
+            from contenuto c inner join erogazione e on c.Id = e.Contenuto
+            inner join connessione conn on e.Dispositivo = conn.Dispositivo
+            and e.Inizio = conn.Inizio
+            inner join film f on f.Id = c.Film
+            where f.Paese = (
+                select f2.Paese
+                from film f2
+                where f2.Id = _film
+                )
+            and conn.Utente= _utente;
+            -- calcolo la media dei coefficienti di storico del film
+            set media_cs = (5*c_storico_genere+2*c_storico_attori+4*c_storico_registi+c_storico_paese)/12;
+            replace into Provvisoria values(_film, media_cs);
+            if finito = 1
+                then leave scan;
+            end if;
+
+        end loop;
+        close c;
+        select Film from Provvisoria
+        order by Storico desc
+        limit _n;
+        drop table Provvisoria;
+
+        end if;
+end $$
+delimiter ;
 
 
 -- -----------------------------------------------------
