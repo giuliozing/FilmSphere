@@ -15,15 +15,106 @@ DELIMITER $$
 
 CREATE PROCEDURE rating_assoluto (IN _idfilm INT, OUT _rating INT)
 	BEGIN
-		DECLARE mediacritica, mediautenti, fasciapremialita, sommapesi, fasciaviews, visualizzazioni, fasciapremialitaregisti, fasciaviewsregisti, numregisti INT;
+		DECLARE temp, mediacritica, mediautenti, fasciapremialita, sommapesi, fasciaviews, visualizzazioni, celebritaregisti, celebritaattori, fasciapremialitaregisti, fasciaviewsregisti, numregisti, sommapremiregisti, sommaviewsregisti, numattori, fasciapremialitaattori, fasciaviewsattori, sommapremiattori, sommaviewsattori INT;
         SET mediacritica = (SELECT AVG(R.Voto) FROM Recensionecritico R WHERE R.Film = _idfilm);
         SET mediautenti = (SELECT AVG(R.Voto) FROM Recensioneutente R WHERE R.Film = _idfilm);
         SET sommapesi = (SELECT sum(P.Pesi) FROM Premio P WHERE P.Id IN (SELECT P1.Premio FROM PremiazioneFilm P1 WHERE P1.Film = _idfilm));
         SET visualizzazioni = (SELECT F.Visualizzazioni FROM Film F WHERE F.Id = _idfilm);
         SET numregisti = (SELECT COUNT(*) FROM Direzione D WHERE D.Film = _idfilm);
-        SET fasciapremialitaregisti = (SELECT SUM(P.Pesi) FROM Premio P WHERE P.Id IN (SELECT P1.Premio FROM PremiazioneRegista P1 WHERE P1.Regista IN (SELECT D.Artista FROM Direzione D WHERE D.Film = _idfilm)));
-        SET fasciaviewsregisti = (SELECT SUM(F.Visualizzazioni) FROM Film F WHERE F.Id IN (SELECT D.Film FROM Direzione D WHERE D.Artista IN (SELECT D.Artista FROM Direzione D WHERE D.Film = _idfilm)));
+        SET sommapremiregisti = (SELECT SUM(P.Pesi) FROM Premio P WHERE P.Id IN (SELECT P1.Premio FROM PremiazioneRegista P1 WHERE P1.Regista IN (SELECT D.Artista FROM Direzione D WHERE D.Film = _idfilm)));
+        SET sommaviewsregisti = (SELECT SUM(A.Visualizzazioni) FROM (SELECT D.Film, SUM(F.Visualizzazioni) FROM Direzione D INNER JOIN Film F ON D.Film = F.Id WHERE D.Artista IN (SELECT D.Artista FROM Direzione D WHERE D.Film = _idfilm) GROUP BY D.Artista) AS A);
+        SET numattori = (SELECT COUNT(*) FROM Interpretazione I WHERE I.Film = _idfilm);
+        SET sommapremiattori = (SELECT SUM(P.Pesi) FROM Premio P WHERE P.Id IN (SELECT P1.Premio FROM PremiazioneAttore P1 WHERE P1.Attore IN (SELECT I.Artista FROM Interpretazione I WHERE I.Film = _idfilm)));
+        SET sommaviewsattori = (SELECT SUM(A.Visualizzazioni) FROM (SELECT I.Film, SUM(F.Visualizzazioni) FROM Interpretazione I INNER JOIN Film F ON I.Film = F.Id WHERE I.Artista IN (SELECT I.Artista FROM Interpretazione I WHERE I.Film = _idfilm) GROUP BY I.Artista) AS A);
+        SET temp = sommapremiregisti/numregisti;
+        IF temp < 20 THEN
+			SET fasciapremialitaregisti = 0;
+		ELSEIF temp >= 20 AND temp < 30 THEN
+			SET fasciapremialitaregisti = 1;
+		ELSEIF temp >= 30 AND temp < 40 THEN
+			SET fasciapremialitaregisti = 2;
+		ELSEIF temp >= 40 AND temp < 50 THEN
+			SET fasciapremialitaregisti = 3;
+		ELSEIF temp >= 50 AND temp < 60 THEN
+			SET fasciapremialitaregisti = 4;
+		ELSE
+			SET fasciapremialitaregisti = 5;
+		END IF;
+        SET temp = sommaviewsregisti/numregisti;
+        IF temp < 30000 THEN
+			SET fasciaviewsregisti = 0;
+		ELSEIF temp >= 30000 AND temp < 45000 THEN
+			SET fasciaviewsregisti = 1;
+		ELSEIF temp >= 45000 AND temp < 60000 THEN
+			SET fasciaviewsregisti = 2;
+		ELSEIF temp >= 60000 AND temp < 75000 THEN
+			SET fasciaviewsregisti = 3;
+		ELSEIF temp >= 75000 AND temp < 90000 THEN
+			SET fasciaviewsregisti = 4;
+		ELSE
+			SET fasciaviewsregisti = 5;
+		END IF;
+        SET celebritaregisti = (fasciapremialitaregisti + fasciaviewsregisti)/2;
         
+		SET temp = sommapremiattori/numattori;
+        IF temp < 5 THEN
+			SET fasciapremialitaattori = 0;
+		ELSEIF temp >= 5 AND temp < 10 THEN
+			SET fasciapremialitaattori = 1;
+		ELSEIF temp >= 10 AND temp < 20 THEN
+			SET fasciapremialitaattori = 2;
+		ELSEIF temp >= 20 AND temp < 30 THEN
+			SET fasciapremialitaattori = 3;
+		ELSEIF temp >= 30 AND temp < 40 THEN
+			SET fasciapremialitaattori = 4;
+		ELSE
+			SET fasciapremialitaattori = 5;
+		END IF;
+        SET temp = sommaviewsattori/numattori;
+        IF temp < 40000 THEN
+			SET fasciaviewsattori = 0;
+		ELSEIF temp >= 40000 AND temp < 60000 THEN
+			SET fasciaviewsattori = 1;
+		ELSEIF temp >= 60000 AND temp < 80000 THEN
+			SET fasciaviewsattori = 2;
+		ELSEIF temp >= 80000 AND temp < 100000 THEN
+			SET fasciaviewsattori = 3;
+		ELSEIF temp >= 100000 AND temp < 120000 THEN
+			SET fasciaviewsattori = 4;
+		ELSE
+			SET fasciaviewsattori = 5;
+		END IF;
+        SET celebritaattori = (fasciapremialitaattori + fasciaviewsattori)/2;
+        
+        IF sommapesi < 30 THEN
+			SET fasciapremialita = 0;
+		ELSEIF sommapesi >= 30 AND sommapesi < 50 THEN
+			SET fasciapremialita = 1;
+		ELSEIF sommapesi >= 50 AND sommapesi < 70 THEN
+			SET fasciapremialita = 2;
+		ELSEIF sommapesi >= 70 AND sommapesi < 90 THEN
+			SET fasciapremialita = 3;
+		ELSEIF sommapesi >= 90 AND sommapesi < 110 THEN
+			SET fasciapremialita = 4;
+		ELSE
+			SET fasciapremialita = 5;
+		END IF;
+        
+        IF visualizzazioni < 20000 THEN
+			SET fasciaviews = 0;
+		ELSEIF visualizzazioni >= 20000 AND visualizzazioni < 30000 THEN
+			SET fasciaviews = 1;
+		ELSEIF visualizzazioni >= 30000 AND visualizzazioni < 40000 THEN
+			SET fasciaviews = 2;
+		ELSEIF visualizzazioni >= 40000 AND visualizzazioni < 50000 THEN
+			SET fasciaviews = 3;
+		ELSEIF visualizzazioni >= 50000 AND visualizzazioni < 60000 THEN
+			SET fasciaviews = 4;
+		ELSE
+			SET fasciaviews = 5;
+		END IF;
+        
+		SET _rating = (mediacritica + 2*mediautenti + fasciapremialita + 4*fasciaviews + celebritaregisti + celebritaattori)/10;
     END $$
 DELIMITER ;
 
