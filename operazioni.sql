@@ -118,6 +118,13 @@ CREATE PROCEDURE rating_assoluto (IN _idfilm INT, OUT _rating INT)
     END $$
 DELIMITER ;
 
+-- -----------------------------------------------------
+-- Operazione 3: Raccomandazione di Contenuti
+-- -----------------------------------------------------
+
+
+DROP PROCEDURE IF EXISTS raccomandazione_contenuti;
+
 
 -- -----------------------------------------------------
 -- Operazione 6: Registrazione di un Utente

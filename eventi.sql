@@ -19,10 +19,9 @@ begin
     declare _durata int;
     declare _inizio date;
     declare _check tinyint(1);
-    declare _fine tinyint(1);
+    declare _fine tinyint(1) default 0;
     declare c cursor for select Codice from plz.utente where day(utente.Inizio)=day(current_date);
     declare continue handler for not found set _fine = 1;
-    set _fine = 0;
     scan: loop
         fetch c into _user;
         select Abbonamento, Inizio from utente where Codice = _user into _abbonamento, _inizio;

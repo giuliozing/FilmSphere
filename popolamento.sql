@@ -12455,7 +12455,9 @@ INSERT INTO PLZ.Sottotitoli VALUES (119,'Portoghese'),
 
 
 
-INSERT INTO plz.utente VALUES (2,'Fredrik','Bajer','Fredrik.Bajer@mail.com','4t46onSoYY6iuc7V','1967-10-19 00:00:00','Australia',1328904243287250,'Premium','2022-09-24 00:00:00'),
+INSERT INTO plz.utente VALUES 
+	(1, 'Galileo', 'Galilei', 'Galileo.Galilei@mail.com', '0HNeg8Vqsg8KVaR2', '1956-07-12 00:00:00', 'Italia', 1173622646635750, 'Ultimate', '2023-01-20 00:00:00' ),
+	(2,'Fredrik','Bajer','Fredrik.Bajer@mail.com','4t46onSoYY6iuc7V','1967-10-19 00:00:00','Australia',1328904243287250,'Premium','2022-09-24 00:00:00'),
 	(3,'Auguste','Beernaert','Auguste.Beernaert@mail.com','SxHJ8j4ZR9xDuvUP','1989-06-18 00:00:00','Austria',1416261551761150,'Basic','2022-12-05 00:00:00'),
 	(4,'Paul-Henri-Benjamin','d''EstournellesdeConstant','Paul-Henri-Benjamin.d''EstournellesdeConstant@mail.com','tufVmfj7IO9EnBQq','1967-12-22 00:00:00','Belgio',1426365752339250,'Premium','2023-01-30 00:00:00'),
 	(5,'TobiasMichael','CarelAsser','TobiasMichael.CarelAsser@mail.com','rjZA1RX71TWVAy6B','1998-06-11 00:00:00','Brasile',1430891826015410,'Basic','2022-11-19 00:00:00'),
