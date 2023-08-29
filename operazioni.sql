@@ -4,7 +4,7 @@
 
 USE plz;
 
--- -----------------------------------------------------
+-- ----------------------------------------------------
 -- Operazione 1: Rating Assoluto, o Valutazione
 -- -----------------------------------------------------
 
@@ -119,7 +119,7 @@ CREATE PROCEDURE rating_assoluto (IN _idfilm INT, OUT _rating INT)
 DELIMITER ;
 
 -- -----------------------------------------------------
--- Rating Relativo
+-- Operazione 2: Rating Relativo
 -- -----------------------------------------------------
 
 DROP PROCEDURE IF EXISTS rating_relativo;
@@ -550,6 +550,58 @@ begin
 end $$
 delimiter ;
 
+-- -----------------------------------------------------
+-- Operazione 4: Scelta di un Server per l'erogazione di un Contenuto a un Utente
+-- -----------------------------------------------------
+
+drop procedure if exists scegli_server;
+delimiter $$
+create procedure scegli_server(_IP bigint, _contenuto int)
+begin
+    declare paese_di_connessione varchar(45) default '';
+    declare bandadisponibile bigint default 0;
+    declare s, jitter int default 0;
+    declare latitudine_p, longitudine_p, latitudine_s, longitudine_s,chi double default 0;
+    declare finito tinyint(1) default 0;
+    -- individuo i server che possiedono il contenuto
+    declare c cursor for
+        select Server
+        from possessoserver
+        where Contenuto=_contenuto;
+    declare continue handler for not found set finito=1;
+    -- risalgo al Paese da cui si sta collegando l'utente
+    select Nome
+    from Paese
+    where _IP>InizioIP
+    and _IP < FineIP into paese_di_connessione;
+    -- recupero latitudine e longitudine del paese
+    select Latitudine, Longitudine into latitudine_p, longitudine_p
+    from paese
+    where Nome = paese_di_connessione;
+    create table provvisoria_server (
+        `Server` int not null,
+        `Chi` double not null
+    );
+    open c;
+    scan: loop
+        fetch c into s;
+        select ser.Jitter, ser.Latitudine, ser.Longitudine, ser.BandaDisponibile into jitter, latitudine_s, longitudine_s, bandadisponibile
+        from server ser
+        where ser.Id = s;
+        set chi = bandadisponibile/(power(power((latitudine_s-latitudine_p),2)+power((longitudine_s-longitudine_p),2), 0.5))/jitter;
+        insert into provvisoria_server values (s, chi);
+        if finito = 1
+            then leave scan;
+        end if;
+    end loop;
+    close c;
+    select p.Server
+    from provvisoria_server p
+    order by p.Chi desc
+    limit 1;
+    drop table provvisoria_server;
+end $$
+delimiter ;
 
 -- -----------------------------------------------------
 -- Operazione 6: Registrazione di un Utente
