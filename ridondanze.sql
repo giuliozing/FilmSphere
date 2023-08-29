@@ -2,7 +2,7 @@
 -- -----------------------------------------------------
 -- Inizializzazione della Ridondanza BandaDisponibile
 -- -----------------------------------------------------
-drop procedure inizializza_banda_disponibile;
+drop procedure if exists inizializza_banda_disponibile;
 delimiter $$
 create procedure inizializza_banda_disponibile()
 begin
