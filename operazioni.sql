@@ -604,6 +604,46 @@ end $$
 delimiter ;
 
 -- -----------------------------------------------------
+-- Operazione 5: Caching
+-- -----------------------------------------------------
+
+
+CREATE PROCEDURE caching (IN _id INT, _n INT)
+	BEGIN
+		WITH lingueaudio AS (
+			SELECT DISTINCT C1.LinguaAudio
+            FROM Connessione C INNER JOIN Erogazione E ON (C.Inizio = E.InizioConnessione AND C.Dispositivo = E.Dispositivo) INNER JOIN Contenuto C1 ON E.Contenuto = C1.Id
+            WHERE C.Utente = _id AND C1.LinguaAudio IS NOT NULL
+		),
+        codificaformatiaudio AS (
+			SELECT DISTINCT C1.CodificaAudio
+            FROM Connessione C INNER JOIN Erogazione E ON (C.Inizio = E.InizioConnessione AND C.Dispositivo = E.Dispositivo) INNER JOIN Contenuto C1 ON E.Contenuto = C1.Id
+            WHERE C.Utente = _id
+        ),
+        codificaformatovideo AS (
+			SELECT DISTINCT C2.FormatoVideo
+            FROM Connessione C INNER JOIN Erogazione E ON (C.Inizio = E.InizioConnessione AND C.Dispositivo = E.Dispositivo) INNER JOIN Contenuto C1 ON E.Contenuto = C1.Id INNER JOIN CodificaVideo C2 ON C2.Contenuto = C1.Id
+            WHERE C.Utente = _id
+        ),
+        contenutinoncensurati AS (
+			SELECT DISTINCT R.Contenuto
+            FROM RestrizioneContenuto R
+            WHERE R.Paese <> (SELECT U.Nazionalita FROM Utente U WHERE U.Codice = _id)
+        ),
+        contenutinelpianoabbonamento AS (
+			SELECT DISTINCT O.Contenuto
+            FROM OffertaContenuto O
+            WHERE O.Abbonamento = (SELECT U.Abbonamento FROM Utente U WHERE U.Codice = _id)
+        ),
+        contenutitarget AS (
+			SELECT C.Id
+            FROM Contenuto C INNER JOIN CodificaVideo C1 ON C1.Contenuto = C.Id
+            WHERE C.LinguaAudio IS IN (lingueaudio) AND C.CodificaAudio IS IN (codificaformatiaudio) AND C1.FormatoVideo IS IN (codificaformatovideo) AND C.Id IS IN (contenutinoncensurati) AND C.Id IS IN (contenutinelpianoabbonamento)
+		)
+    END $$
+DELIMITER ;
+
+-- -----------------------------------------------------
 -- Operazione 6: Registrazione di un Utente
 -- -----------------------------------------------------
 
