@@ -12855,3 +12855,5 @@ INSERT INTO plz.utente VALUES
 	(98,'AbiyAhmed','Ali','AbiyAhmed.Ali@mail.com','V2z0u33oTmzjhD0p','1992-05-31 00:00:00','Italia',8330470844487130,NULL,'2023-02-14 00:00:00'),
 	(99,'Maria','Ressa','Maria.Ressa@mail.com','fkKE9uw8TYggegse','1978-10-04 00:00:00','Francia',8371073807203090,NULL,'2023-02-19 00:00:00'),
 	(100,'Dmitry','Muratov','Dmitry.Muratov@mail.com','8yWOdzzENlfN01Pu','2000-11-04 00:00:00','Spagna',8392513960633820,NULL,'2023-01-14 00:00:00');
+
+
