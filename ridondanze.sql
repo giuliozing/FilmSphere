@@ -133,3 +133,4 @@ begin
     call aggiorna_rating_assoluto_procedura();
 end;
 
+

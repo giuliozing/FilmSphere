@@ -960,6 +960,83 @@ begin
 end $$
 delimiter ;
 
+-- -----------------------------------------------------
+-- Operazione 11: Fruizione Media dei Vincoli dell'Abbonamento
+-- -----------------------------------------------------
+
+
+drop procedure if exists fruizione_vincoli_abbonamento;
+delimiter $$
+create procedure fruizione_vincoli_abbonamento(in mese int, in anno int)
+begin
+   with base as (
+       -- analizziamo la fascia Teen, per piano abbonamento e paese
+    select 'Fascia Teen' as Fascia, utente.Codice, paese.Nome as Paese, utente.Abbonamento, sum(contenuto.Lunghezza)/(3600*abbonamento.MaxOre) as fruizione_tempo, sum(contenuto.Dimensione)/(1000000000*abbonamento.MaxGB) as fruizione_GB
+    from paese cross join abbonamento
+    inner join utente
+    on utente.Nazionalita = paese.Nome
+    and utente.Abbonamento = abbonamento.Nome
+    inner join connessione on connessione.Utente = utente.Codice
+    inner join erogazione on connessione.Inizio = erogazione.Inizio and connessione.Dispositivo = erogazione.Dispositivo
+    inner join contenuto on erogazione.Contenuto = Contenuto.Id
+    where Abbonamento.MaxGB is not null and Abbonamento.MaxOre is not null
+   and Utente.DataNascita +interval 13 year <= current_date and utente.DataNascita + interval 18 year >current_date
+    and month(erogazione.Inizio) = mese and year(erogazione.Inizio) = anno
+    group by utente.Codice, paese.Nome, utente.Abbonamento
+
+    union
+
+    -- fascia Young
+    select 'Fascia Young' as Fascia, utente.Codice, paese.Nome as Paese, utente.Abbonamento, sum(contenuto.Lunghezza)/(3600*abbonamento.MaxOre) as fruizione_tempo, sum(contenuto.Dimensione)/(1000000000*abbonamento.MaxGB) as fruizione_GB
+    from paese cross join abbonamento
+    inner join utente
+    on utente.Nazionalita = paese.Nome
+    and utente.Abbonamento = abbonamento.Nome
+    inner join connessione on connessione.Utente = utente.Codice
+    inner join erogazione on connessione.Inizio = erogazione.Inizio and connessione.Dispositivo = erogazione.Dispositivo
+    inner join contenuto on erogazione.Contenuto = Contenuto.Id
+    where Abbonamento.MaxGB is not null and Abbonamento.MaxOre is not null
+   and Utente.DataNascita +interval 19 year <= current_date and utente.DataNascita + interval 35 year >current_date
+    and month(erogazione.Inizio) = mese and year(erogazione.Inizio) = anno
+    group by utente.Codice, paese.Nome, utente.Abbonamento
+
+    union
+    -- fascia Middle-Aged
+    select 'Fascia Middle-Aged' as Fascia, utente.Codice, paese.Nome as Paese, utente.Abbonamento, sum(contenuto.Lunghezza)/(3600*abbonamento.MaxOre) as fruizione_tempo, sum(contenuto.Dimensione)/(1000000000*abbonamento.MaxGB) as fruizione_GB
+    from paese cross join abbonamento
+    inner join utente
+    on utente.Nazionalita = paese.Nome
+    and utente.Abbonamento = abbonamento.Nome
+    inner join connessione on connessione.Utente = utente.Codice
+    inner join erogazione on connessione.Inizio = erogazione.Inizio and connessione.Dispositivo = erogazione.Dispositivo
+    inner join contenuto on erogazione.Contenuto = Contenuto.Id
+    where Abbonamento.MaxGB is not null and Abbonamento.MaxOre is not null
+   and Utente.DataNascita +interval 36 year <= current_date and utente.DataNascita + interval 65 year >current_date
+    and month(erogazione.Inizio) = mese and year(erogazione.Inizio) = anno
+    group by utente.Codice, paese.Nome, utente.Abbonamento
+
+    -- Fascia Senior
+    union
+
+    select 'Fascia Senior' as Fascia, utente.Codice, paese.Nome as Paese, utente.Abbonamento, sum(contenuto.Lunghezza)/(3600*abbonamento.MaxOre) as fruizione_tempo, sum(contenuto.Dimensione)/(1000000000*abbonamento.MaxGB) as fruizione_GB
+    from paese cross join abbonamento
+    inner join utente
+    on utente.Nazionalita = paese.Nome
+    and utente.Abbonamento = abbonamento.Nome
+    inner join connessione on connessione.Utente = utente.Codice
+    inner join erogazione on connessione.Inizio = erogazione.Inizio and connessione.Dispositivo = erogazione.Dispositivo
+    inner join contenuto on erogazione.Contenuto = Contenuto.Id
+    where Abbonamento.MaxGB is not null and Abbonamento.MaxOre is not null
+   and Utente.DataNascita +interval 66 year <= current_date
+    and month(erogazione.Inizio) = mese and year(erogazione.Inizio) = anno
+    group by utente.Codice, paese.Nome, utente.Abbonamento
+   )
+    select Abbonamento, Fascia, Paese, avg(fruizione_tempo) as fruizione_tempo_media, avg(fruizione_GB) as fruizione_GB_media
+    from base
+    group by Abbonamento, Fascia, Paese;
+end $$
+delimiter ;
+
 
 -- -----------------------------------------------------
 -- Operazione 12: Lingue per tempo di fruizione, come audio e come sottotitoli
