@@ -93,3 +93,43 @@ for each row
         update film set SommaCritica = somma_critici + new.Voto, TotaleCritica = totale_critici+1 where Id = new.Film;
     end $$
 delimiter ;
+
+-- -----------------------------------------------------
+-- Inizializzazione della ridondanza "Rating Assoluto"
+-- -----------------------------------------------------
+
+drop procedure if exists aggiorna_rating_assoluto_procedura;
+delimiter $$
+create procedure aggiorna_rating_assoluto_procedura()
+begin
+    declare finito tinyint(1) default 0;
+    declare film_in_aggiornamento, RA int;
+     declare c cursor for select Id from film;
+    declare continue handler for not found set finito = 1;
+    open c;
+    scan: loop
+        fetch c into film_in_aggiornamento;
+        call rating_assoluto(film_in_aggiornamento, RA);
+        update film set RatingAssoluto = RA where Id = film_in_aggiornamento;
+        if finito
+            then leave scan;
+        end if;
+    end loop;
+    close c;
+end $$
+delimiter ;
+
+
+call aggiorna_rating_assoluto_procedura();
+
+-- -----------------------------------------------------
+-- Aggiornamento della ridondanza "Rating Assoluto"
+-- -----------------------------------------------------
+
+drop event if exists aggiorna_rating_assoluto;
+create event aggiorna_rating_assoluto_evento
+on schedule every 1 day starts '2023-09-15-00:00:00' do
+begin
+    call aggiorna_rating_assoluto_procedura();
+end;
+

@@ -360,7 +360,7 @@ CREATE PROCEDURE rating_relativo (IN _idfilm INT, _idutente INT, OUT _rating INT
 			SET fasciaviews = 100;
 		END IF;
         
-		SET _rating = (mediacritica * f_critica + mediautenti * f_amati + fasciapremialita * f_premiati + fasciaviews * f_popolari + celebritaregisti * f_autore + celebritaattori * f_star + storia * f_storia)/f_autore + f_storia + f_critica + f_amati + f_popolari + f_premiati + f_star;
+		SET _rating = (mediacritica * f_critica + mediautenti * f_amati + fasciapremialita * f_premiati + fasciaviews * f_popolari + celebritaregisti * f_autore + celebritaattori * f_star + storia * f_storia)/(f_autore + f_storia + f_critica + f_amati + f_popolari + f_premiati + f_star);
     END $$
 DELIMITER ;
 
