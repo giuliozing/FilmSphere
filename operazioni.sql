@@ -615,46 +615,20 @@ DELIMITER $$
 CREATE PROCEDURE caching (IN _id INT, _n INT)
 	BEGIN
 		DECLARE lower_bound, upper_bound, etautente, autore, storia, critica, amati, popolari, star, premiati INT;
-        DECLARE datanascitautente DATE;
+        DECLARE datanascitautente, datacreazioneaccount DATE;
         DECLARE nazionalitautente VARCHAR(45);
-        SET autore = (SELECT I.Valore
-					  FROM Importanza I
-                      WHERE I.Utente = _id AND I.Fattore = 'Film d’autore'
-                      );
-		SET storia = (SELECT I.Valore
-					  FROM Importanza I
-                      WHERE I.Utente = _id AND I.Fattore = 'I film che hanno fatto la storia'
-                      );
-		SET critica = (SELECT I.Valore
-					  FROM Importanza I
-                      WHERE I.Utente = _id AND I.Fattore = 'Esaltati dalla critica'
-                      );
-		SET amati = (SELECT I.Valore
-					  FROM Importanza I
-                      WHERE I.Utente = _id AND I.Fattore = 'I più amati'
-                      );
-		SET popolari = (SELECT I.Valore
-					  FROM Importanza I
-                      WHERE I.Utente = _id AND I.Fattore = 'Popolari'
-                      );
-		SET star = (SELECT I.Valore
-					  FROM Importanza I
-                      WHERE I.Utente = _id AND I.Fattore = 'Le star'
-                      );
-		SET premiati = (SELECT I.Valore
-					  FROM Importanza I
-                      WHERE I.Utente = _id AND I.Fattore = 'Premiati'
-                      );
-        SET nazionalitautente = (SELECT U.Nazionalita
-								 FROM Utente U
-                                 WHERE U.Codice = _id
-                                 );
-        SET datanascitautente = (SELECT U.DataNascita
-								 FROM Utente U
-                                 WHERE U.Codice = _id
-                                 );
+        SET autore = (SELECT I.Valore FROM Importanza I WHERE I.Utente = _id AND I.Fattore = 'Film d’autore');
+		SET storia = (SELECT I.Valore FROM Importanza I WHERE I.Utente = _id AND I.Fattore = 'I film che hanno fatto la storia');
+		SET critica = (SELECT I.Valore FROM Importanza I WHERE I.Utente = _id AND I.Fattore = 'Esaltati dalla critica');
+		SET amati = (SELECT I.Valore FROM Importanza I WHERE I.Utente = _id AND I.Fattore = 'I più amati');
+		SET popolari = (SELECT I.Valore FROM Importanza I WHERE I.Utente = _id AND I.Fattore = 'Popolari');
+		SET star = (SELECT I.Valore FROM Importanza I WHERE I.Utente = _id AND I.Fattore = 'Le star');
+		SET premiati = (SELECT I.Valore FROM Importanza I WHERE I.Utente = _id AND I.Fattore = 'Premiati');
+        SET nazionalitautente = (SELECT U.Nazionalita FROM Utente U WHERE U.Codice = _id);
+        SET datanascitautente = (SELECT U.DataNascita FROM Utente U WHERE U.Codice = _id);
+		SET datacreazioneaccount =  (SELECT U.Inizio FROM Utente U WHERE U.Codice = _id);
 		SET etautente = YEAR(CURRENT_DATE) - YEAR(datanascitautente);
-        IF etautente >= 13 AND etautente <= 18 THEN
+		IF etautente >= 13 AND etautente <= 18 THEN
 			SET lower_bound = 13;
             SET upper_bound = 18;
 		ELSEIF etautente >= 19 AND etautente <= 34 THEN
@@ -666,127 +640,202 @@ CREATE PROCEDURE caching (IN _id INT, _n INT)
 		ELSEIF etautente >= 65 THEN
 			SET lower_bound = 65;
             SET upper_bound = 150;
-		WITH lingueaudio AS (
-			SELECT DISTINCT C1.LinguaAudio
-            FROM Connessione C INNER JOIN Erogazione E ON (C.Inizio = E.InizioConnessione AND C.Dispositivo = E.Dispositivo) INNER JOIN Contenuto C1 ON E.Contenuto = C1.Id
-            WHERE C.Utente = _id AND C1.LinguaAudio IS NOT NULL
-		),
-        codificaformatiaudio AS (
-			SELECT DISTINCT C1.CodificaAudio
-            FROM Connessione C INNER JOIN Erogazione E ON (C.Inizio = E.InizioConnessione AND C.Dispositivo = E.Dispositivo) INNER JOIN Contenuto C1 ON E.Contenuto = C1.Id
-            WHERE C.Utente = _id AND C1.CodificaAudio IS NOT NULL
-        ),
-        codificaformatovideo AS (
-			SELECT DISTINCT C2.FormatoVideo
-            FROM Connessione C INNER JOIN Erogazione E ON (C.Inizio = E.InizioConnessione AND C.Dispositivo = E.Dispositivo) INNER JOIN Contenuto C1 ON E.Contenuto = C1.Id INNER JOIN CodificaVideo C2 ON C2.Contenuto = C1.Id
-            WHERE C.Utente = _id AND E.Contenuto IN (SELECT C2.Contenuto
-													 FROM CodificaVideo C2)
-        ),
-        contenutinoncensurati AS (
-			SELECT DISTINCT R.Contenuto
-            FROM RestrizioneContenuto R
-            WHERE R.Paese <> nazionalitautente
-        ),
-        contenutinelpianoabbonamento AS (
-			SELECT DISTINCT O.Contenuto
-            FROM OffertaContenuto O
-            WHERE O.Abbonamento = (SELECT U.Abbonamento FROM Utente U WHERE U.Codice = _id)
-        ),
-        contenutitargetaudio AS (
-			SELECT C.Id
-            FROM Contenuto C
-            WHERE C.LinguaAudio IN (lingueaudio) AND C.CodificaAudio IN (codificaformatiaudio) AND C.Id IN (contenutinoncensurati) AND C.Id IN (contenutinelpianoabbonamento)
-		),
-        contenutitargetvideo AS (
-			SELECT C.Id
-            FROM Contenuto C INNER JOIN CodificaVideo C1 ON C1.Contenuto = C.Id
-            WHERE C1.FormatoVideo IN (codificaformatovideo) AND C.Id IN (contenutinoncensurati) AND C.Id IN (contenutinelpianoabbonamento)
-		),
-        contenutitarget AS (
-			SELECT * FROM contenutitargetaudio
-            UNION
-            SELECT * FROM contenuttargetvideo
-        ),
-        autore1 AS (SELECT I.Utente
-				   FROM Importanza I
-                   WHERE I.Fattore = 'Film d’autore' AND abs(I.Valore - autore) <= 20
-		),
-		storia1 AS (SELECT I.Utente
-				   FROM Importanza I
-                   WHERE I.Fattore = 'I film che hanno fatto la storia' AND abs(I.Valore - storia) <= 20
-		),
-		critica1 AS (SELECT I.Utente
-				   FROM Importanza I
-                   WHERE I.Fattore = 'Esaltati dalla critica' AND abs(I.Valore - critica) <= 20
-		),
-		amati1 AS (SELECT I.Utente
-				   FROM Importanza I
-                   WHERE I.Fattore = 'I più amati' AND abs(I.Valore - amati) <= 20
-		),
-		popolari1 AS (SELECT I.Utente
-				   FROM Importanza I
-                   WHERE I.Fattore = 'Popolari' AND abs(I.Valore - popolari) <= 20
-		),
-		star1 AS (SELECT I.Utente
-				   FROM Importanza I
-                   WHERE I.Fattore = 'Le star' AND abs(I.Valore - star) <= 20
-		),
-		premiati1 AS (SELECT I.Utente
-				   FROM Importanza I
-                   WHERE I.Fattore = 'Premiati' AND abs(I.Valore - premiati) <= 20
-		),
-        movie_index AS (
-			SELECT C.Id, (SELECT COUNT(*)
-						  FROM Connessione C1 INNER JOIN Erogazione E ON (C1.Inizio = E.InizioConnessione AND C1.Dispositivo = E.Dispositivo) INNER JOIN Utente U ON C1.Utente = U.Codice
-                          WHERE E.Inizio > (DATE_SUB(CURRENT_DATE(), INTERVAL 14 DAY)) AND E.Contenuto IN (SELECT C2.Id
-																								 FROM Contenuto C2
-                                                                                                 WHERE C2.Film = (SELECT C3.Film
-																												  FROM Contenuto C3
-                                                                                                                  WHERE C3.Id = C.Id
-                                                                                                                  )
-																								 ) AND YEAR(CURRENT_DATE) - YEAR(U.DataNascita) >= lower_bound AND YEAR(CURRENT_DATE) - YEAR(U.DataNascita) <= upper_bound
-                          ) AS Generazione, (SELECT COUNT(*)
-						  FROM Connessione C1 INNER JOIN Erogazione E ON (C1.Inizio = E.InizioConnessione AND C1.Dispositivo = E.Dispositivo) INNER JOIN Utente U ON C1.Utente = U.Codice
-                          WHERE E.Inizio > (DATE_SUB(CURRENT_DATE(), INTERVAL 14 DAY)) AND E.Contenuto IN (SELECT C2.Id
-																								 FROM Contenuto C2
-                                                                                                 WHERE C2.Film = (SELECT C3.Film
-																												  FROM Contenuto C3
-                                                                                                                  WHERE C3.Id = C.Id
-                                                                                                                  )
-																								 ) AND U.Nazionalita = nazionalitautente
-                          ) AS Paese, (SELECT COUNT(*)
-						  FROM Connessione C1 INNER JOIN Erogazione E ON (C1.Inizio = E.InizioConnessione AND C1.Dispositivo = E.Dispositivo) INNER JOIN Utente U ON C1.Utente = U.Codice
-                          WHERE E.Inizio > (DATE_SUB(CURRENT_DATE(), INTERVAL 14 DAY)) AND E.Contenuto IN (SELECT C2.Id
-																								 FROM Contenuto C2
-                                                                                                 WHERE C2.Film = (SELECT C3.Film
-																												  FROM Contenuto C3
-                                                                                                                  WHERE C3.Id = C.Id
-                                                                                                                  )
-																								 ) AND U.Codice IN (SELECT Utente
-																													FROM autore1 NATURAL JOIN storia1 NATURAL JOIN critica1 NATURAL JOIN amati1 NATURAL JOIN popolari1 NATURAL JOIN star1 NATURAL JOIN premiati1
-																													)
-                          ) AS Preferenze, (SELECT COUNT(*)
-						  FROM Connessione C1 INNER JOIN Erogazione E ON (C1.Inizio = E.InizioConnessione AND C1.Dispositivo = E.Dispositivo) INNER JOIN Utente U ON C1.Utente = U.Codice
-                          WHERE E.Inizio > (DATE_SUB(CURRENT_DATE(), INTERVAL 14 DAY)) AND E.Contenuto IN (SELECT C2.Id
-																								 FROM Contenuto C2
-                                                                                                 WHERE C2.Film = (SELECT C3.Film
-																												  FROM Contenuto C3
-                                                                                                                  WHERE C3.Id = C.Id
-                                                                                                                  )
-																								 )
-						  ) AS Totale
-            FROM contenutitarget C
-        ),
-        codec_index AS (
+		END IF;
+        
+			BEGIN
+				WITH lingueaudio AS (
+				SELECT DISTINCT C1.LinguaAudio
+				FROM Connessione C INNER JOIN Erogazione E ON (C.Inizio = E.InizioConnessione AND C.Dispositivo = E.Dispositivo) INNER JOIN Contenuto C1 ON E.Contenuto = C1.Id
+				WHERE C.Utente = _id AND C1.LinguaAudio IS NOT NULL
+			),
+			codificaformatiaudio AS (
+				SELECT DISTINCT C1.CodificaAudio
+				FROM Connessione C INNER JOIN Erogazione E ON (C.Inizio = E.InizioConnessione AND C.Dispositivo = E.Dispositivo) INNER JOIN Contenuto C1 ON E.Contenuto = C1.Id
+				WHERE C.Utente = _id AND C1.CodificaAudio IS NOT NULL
+			),
+			codificaformatovideo AS (
+				SELECT DISTINCT C2.FormatoVideo
+				FROM Connessione C INNER JOIN Erogazione E ON (C.Inizio = E.InizioConnessione AND C.Dispositivo = E.Dispositivo) INNER JOIN Contenuto C1 ON E.Contenuto = C1.Id INNER JOIN CodificaVideo C2 ON C2.Contenuto = C1.Id
+				WHERE C.Utente = _id AND E.Contenuto IN (SELECT C2.Contenuto
+														 FROM CodificaVideo C2)
+			),
+			contenutinoncensurati AS (
+				SELECT DISTINCT R.Contenuto
+				FROM RestrizioneContenuto R
+				WHERE R.Paese <> nazionalitautente
+			),
+			contenutinelpianoabbonamento AS (
+				SELECT DISTINCT O.Contenuto
+				FROM OffertaContenuto O
+				WHERE O.Abbonamento = (SELECT U.Abbonamento FROM Utente U WHERE U.Codice = _id)
+			),
+			contenutitargetaudio AS (
+				SELECT C.Id
+				FROM Contenuto C
+				WHERE C.LinguaAudio IN (lingueaudio) AND C.CodificaAudio IN (codificaformatiaudio) AND C.Id IN (contenutinoncensurati) AND C.Id IN (contenutinelpianoabbonamento)
+			),
+			contenutitargetvideo AS (
+				SELECT C.Id
+				FROM Contenuto C INNER JOIN CodificaVideo C1 ON C1.Contenuto = C.Id
+				WHERE C1.FormatoVideo IN (codificaformatovideo) AND C.Id IN (contenutinoncensurati) AND C.Id IN (contenutinelpianoabbonamento)
+			),
+			contenutitarget AS (
+				SELECT * FROM contenutitargetaudio
+				UNION
+				SELECT * FROM contenuttargetvideo
+			),
+			autore1 AS (SELECT I.Utente
+					   FROM Importanza I
+					   WHERE I.Fattore = 'Film d’autore' AND abs(I.Valore - autore) <= 20
+			),
+			storia1 AS (SELECT I.Utente
+					   FROM Importanza I
+					   WHERE I.Fattore = 'I film che hanno fatto la storia' AND abs(I.Valore - storia) <= 20
+			),
+			critica1 AS (SELECT I.Utente
+					   FROM Importanza I
+					   WHERE I.Fattore = 'Esaltati dalla critica' AND abs(I.Valore - critica) <= 20
+			),
+			amati1 AS (SELECT I.Utente
+					   FROM Importanza I
+					   WHERE I.Fattore = 'I più amati' AND abs(I.Valore - amati) <= 20
+			),
+			popolari1 AS (SELECT I.Utente
+					   FROM Importanza I
+					   WHERE I.Fattore = 'Popolari' AND abs(I.Valore - popolari) <= 20
+			),
+			star1 AS (SELECT I.Utente
+					   FROM Importanza I
+					   WHERE I.Fattore = 'Le star' AND abs(I.Valore - star) <= 20
+			),
+			premiati1 AS (SELECT I.Utente
+					   FROM Importanza I
+					   WHERE I.Fattore = 'Premiati' AND abs(I.Valore - premiati) <= 20
+			),
+			movie_index AS (
+				SELECT C.Id, (SELECT COUNT(*)
+							  FROM Connessione C1 INNER JOIN Erogazione E ON (C1.Inizio = E.InizioConnessione AND C1.Dispositivo = E.Dispositivo) INNER JOIN Utente U ON C1.Utente = U.Codice
+							  WHERE E.Inizio > (DATE_SUB(CURRENT_DATE(), INTERVAL 14 DAY)) AND E.Contenuto IN (SELECT C2.Id
+																									 FROM Contenuto C2
+																									 WHERE C2.Film = (SELECT C3.Film
+																													  FROM Contenuto C3
+																													  WHERE C3.Id = C.Id
+																													  )
+																									 ) AND YEAR(CURRENT_DATE) - YEAR(U.DataNascita) >= lower_bound AND YEAR(CURRENT_DATE) - YEAR(U.DataNascita) <= upper_bound
+							  ) AS Generazione, (SELECT COUNT(*)
+							  FROM Connessione C1 INNER JOIN Erogazione E ON (C1.Inizio = E.InizioConnessione AND C1.Dispositivo = E.Dispositivo) INNER JOIN Utente U ON C1.Utente = U.Codice
+							  WHERE E.Inizio > (DATE_SUB(CURRENT_DATE(), INTERVAL 14 DAY)) AND E.Contenuto IN (SELECT C2.Id
+																									 FROM Contenuto C2
+																									 WHERE C2.Film = (SELECT C3.Film
+																													  FROM Contenuto C3
+																													  WHERE C3.Id = C.Id
+																													  )
+																									 ) AND U.Nazionalita = nazionalitautente
+							  ) AS Paese, (SELECT COUNT(*)
+							  FROM Connessione C1 INNER JOIN Erogazione E ON (C1.Inizio = E.InizioConnessione AND C1.Dispositivo = E.Dispositivo) INNER JOIN Utente U ON C1.Utente = U.Codice
+							  WHERE E.Inizio > (DATE_SUB(CURRENT_DATE(), INTERVAL 14 DAY)) AND E.Contenuto IN (SELECT C2.Id
+																									 FROM Contenuto C2
+																									 WHERE C2.Film = (SELECT C3.Film
+																													  FROM Contenuto C3
+																													  WHERE C3.Id = C.Id
+																													  )
+																									 ) AND U.Codice IN (SELECT Utente
+																														FROM autore1 NATURAL JOIN storia1 NATURAL JOIN critica1 NATURAL JOIN amati1 NATURAL JOIN popolari1 NATURAL JOIN star1 NATURAL JOIN premiati1
+																														)
+							  ) AS Preferenze, (SELECT COUNT(*)
+							  FROM Connessione C1 INNER JOIN Erogazione E ON (C1.Inizio = E.InizioConnessione AND C1.Dispositivo = E.Dispositivo) INNER JOIN Utente U ON C1.Utente = U.Codice
+							  WHERE E.Inizio > (DATE_SUB(CURRENT_DATE(), INTERVAL 14 DAY)) AND E.Contenuto IN (SELECT C2.Id
+																									 FROM Contenuto C2
+																									 WHERE C2.Film = (SELECT C3.Film
+																													  FROM Contenuto C3
+																													  WHERE C3.Id = C.Id
+																													  )
+																									 )
+							  ) AS Totale
+				FROM contenutitarget C
+			),
+			codec_index_audio AS (
+				SELECT C.Id, (
+							  SELECT COUNT(*)
+							  FROM Connessione C1 INNER JOIN Erogazione E ON (C1.Inizio = E.InizioConnessione AND C1.Dispositivo = E.Dispositivo) INNER JOIN contenutitargetaudio A ON A.Id = E.Contenuto
+							  WHERE C1.Utente = _id AND E.Inizio > (DATE_SUB(CURRENT_DATE(), INTERVAL 14 DAY)) AND E.Contenuto IN (
+																																   SELECT C2.Id
+																																   FROM contenutitargetaudio C2 INNER JOIN Contenuto C4 ON C2.Id = C4.Id INNER JOIN FormatoAudio F ON C4.CodificaAudio = F.Codice
+																																   WHERE F.Famiglia = (SELECT F1.Famiglia
+																																					   FROM contenutitargetaudio C3 INNER JOIN Contenuto C5 ON C3.Id = C5.Id INNER JOIN FormatoAudio F1 ON C5.CodificaAudio = F1.Codice
+																																					   WHERE C3.Id = C.Id
+																																					   )
+																																   )
+							 ) AS StessaFamiglia,
+							  (SELECT COUNT(*)
+							  FROM Connessione C1 INNER JOIN Erogazione E ON (C1.Inizio = E.InizioConnessione AND C1.Dispositivo = E.Dispositivo) INNER JOIN contenutitargetaudio A ON A.Id = E.Contenuto
+							  WHERE C1.Utente = _id AND E.Inizio > (DATE_SUB(CURRENT_DATE(), INTERVAL 14 DAY)) 
+							 ) AS Totale
+				FROM contenutitargetaudio C
+			),
+			codec_index_video AS (
+				SELECT C.Id, (SELECT COUNT(*)
+							  FROM Connessione C1 INNER JOIN Erogazione E ON (C1.Inizio = E.InizioConnessione AND C1.Dispositivo = E.Dispositivo) INNER JOIN contenutitargetvideo V ON V.Id = E.Contenuto
+							  WHERE C1.Utente = _id AND E.Inizio > (DATE_SUB(CURRENT_DATE(), INTERVAL 14 DAY)) AND E.Contenuto IN (
+																																   SELECT C2.Id
+																																   FROM contenutitargetvideo C2 INNER JOIN Contenuto C3 ON C2.Id = C3.Id INNER JOIN CodificaVideo C4 ON C2.Id = C4.Contenuto INNER JOIN FormatoVideo F ON C4.FormatoVideo = F.Codice
+																																   WHERE F.Famiglia = (
+																																						SELECT F1.Famiglia
+																																						FROM contenutitargetvideo C5 INNER JOIN Contenuto C6 ON C5.Id = C6.Id INNER JOIN CodificaVideo C7 ON C5.Id = C7.Contenuto INNER JOIN FormatoVideo F1 ON C7.FormatoVideo = F1.Codice
+																																						WHERE C5.Id = C.Id
+																																						)
+																																   )
+							  ) AS StessaFamiglia, 
+							  (SELECT COUNT(*)
+							  FROM Connessione C1 INNER JOIN Erogazione E ON (C1.Inizio = E.InizioConnessione AND C1.Dispositivo = E.Dispositivo) INNER JOIN contenutitargetvideo V ON V.Id = E.Contenuto
+							  WHERE C1.Utente = _id AND E.Inizio > (DATE_SUB(CURRENT_DATE(), INTERVAL 14 DAY))
+							  ) AS Totale
+				FROM contenutitargetvideo C
+			),
+			codec_index AS (
+			SELECT * FROM codec_index_audio
+			UNION
+			SELECT * FROM codec_index_video
+			),
+			language_index AS (
 			SELECT C.Id, (
 						  SELECT COUNT(*)
-                          FROM Connessione C1 INNER JOIN Erogazione E ON (C1.Inizio = E.InizioConnessione AND C1.Dispositivo = E.Dispositivo) INNER JOIN Utente U ON C1.Utente = U.Codice
-                          WHERE U.Codice = _id AND E.Contenuto IN (
-																   SELECT
-                                                                   FROM contenutitargetaudio C2 INNER JOIN FormatoAudio F ON 
-                                                                   )
-            FROM contenutitargetaudio C
-		)
+						  FROM Connessione C1 INNER JOIN Erogazione E ON (C1.Inizio = E.InizioConnessione AND C1.Dispositivo = E.Dispositivo) INNER JOIN contenutitargetaudio A ON A.Id = E.Contenuto
+						  WHERE C1.Utente = _id AND E.Inizio > (DATE_SUB(CURRENT_DATE(), INTERVAL 14 DAY)) AND E.Contenuto IN (
+																															   SELECT C2.Id
+																															   FROM contenutitargetaudio C2 INNER JOIN Contenuto C3 ON C2.Id = C3.Id
+																															   WHERE C3.LinguaAudio = (SELECT C5.LinguaAudio
+																																					   FROM contenutitargetaudio C4 INNER JOIN Contenuto C5 ON C4.Id = C5.Id
+																																					   WHERE C4.Id = C.Id
+																																				   )
+																															   )
+						 ) AS StessaLingua,
+						  (SELECT COUNT(*)
+						  FROM Connessione C1 INNER JOIN Erogazione E ON (C1.Inizio = E.InizioConnessione AND C1.Dispositivo = E.Dispositivo) INNER JOIN contenutitargetaudio A ON A.Id = E.Contenuto
+						  WHERE C1.Utente = _id AND E.Inizio > (DATE_SUB(CURRENT_DATE(), INTERVAL 14 DAY)) 
+						 ) AS Totale
+			FROM contenutitargetaudio C
+			),
+			vis_di_gamma AS (
+				SELECT C.Id, (
+							SELECT COUNT(*)
+							FROM Connessione C1 INNER JOIN Erogazione E ON (C1.Inizio = E.InizioConnessione AND C1.Dispositivo = E.Dispositivo)
+							WHERE C1.Utente = _id  AND E.Contenuto = C.Id
+							 ) AS Vis
+				FROM contenutitarget
+			),
+            memory_index AS (
+				SELECT V.Id, pow(2.71, (V.Vis - 3)) AS Mem FROM vis_di_gamma V WHERE V.Vis < 3
+                UNION
+                SELECT V.Id, pow(0.8, (V.Vis - 3)) AS Mem FROM vis_di_gamma V WHERE V.Vis >= 3
+			),
+            pi_greco AS (
+				SELECT M.Id,  ((M.Generazione/M.Totale)*4 + (M.Paese/M.Totale)*4 + (M.Preferenze/M.Totale)*2)/10 * (C.StessaFamiglia/C.Totale) * (L.StessaLingua/L.Totale) * M1.Mem AS Pi
+                FROM movie_index M INNER JOIN codec_index C ON M.Id = C.Id INNER JOIN language_index L ON M.Id = L.Id INNER JOIN memory_index M1 ON M.Id = M1.Id
+            )
+			SELECT P.Id, rank() over(ORDER BY P.Pi DESC)
+			FROM pi_greco P;
+		END
     END $$
 DELIMITER ;
 
