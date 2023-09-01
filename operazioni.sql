@@ -641,8 +641,7 @@ CREATE PROCEDURE caching (IN _id INT, _n INT)
 			SET lower_bound = 65;
             SET upper_bound = 150;
 		END IF;
-        
-			BEGIN
+
 				WITH lingueaudio AS (
 				SELECT DISTINCT C1.LinguaAudio
 				FROM Connessione C INNER JOIN Erogazione E ON (C.Inizio = E.InizioConnessione AND C.Dispositivo = E.Dispositivo) INNER JOIN Contenuto C1 ON E.Contenuto = C1.Id
@@ -672,17 +671,17 @@ CREATE PROCEDURE caching (IN _id INT, _n INT)
 			contenutitargetaudio AS (
 				SELECT C.Id
 				FROM Contenuto C
-				WHERE C.LinguaAudio IN (lingueaudio) AND C.CodificaAudio IN (codificaformatiaudio) AND C.Id IN (contenutinoncensurati) AND C.Id IN (contenutinelpianoabbonamento)
+				WHERE C.LinguaAudio IN (select * from lingueaudio) AND C.CodificaAudio IN (select * from codificaformatiaudio) AND C.Id IN (select * from contenutinoncensurati) AND C.Id IN (select * from contenutinelpianoabbonamento)
 			),
 			contenutitargetvideo AS (
 				SELECT C.Id
 				FROM Contenuto C INNER JOIN CodificaVideo C1 ON C1.Contenuto = C.Id
-				WHERE C1.FormatoVideo IN (codificaformatovideo) AND C.Id IN (contenutinoncensurati) AND C.Id IN (contenutinelpianoabbonamento)
+				WHERE C1.FormatoVideo IN (select * from codificaformatovideo) AND C.Id IN (select * from contenutinoncensurati) AND C.Id IN (select * from contenutinelpianoabbonamento)
 			),
 			contenutitarget AS (
 				SELECT * FROM contenutitargetaudio
 				UNION
-				SELECT * FROM contenuttargetvideo
+				SELECT * FROM contenutitargetvideo
 			),
 			autore1 AS (SELECT I.Utente
 					   FROM Importanza I
@@ -822,7 +821,7 @@ CREATE PROCEDURE caching (IN _id INT, _n INT)
 							FROM Connessione C1 INNER JOIN Erogazione E ON (C1.Inizio = E.InizioConnessione AND C1.Dispositivo = E.Dispositivo)
 							WHERE C1.Utente = _id  AND E.Contenuto = C.Id
 							 ) AS Vis
-				FROM contenutitarget
+				FROM contenutitarget C
 			),
             memory_index AS (
 				SELECT V.Id, pow(2.71, (V.Vis - 3)) AS Mem FROM vis_di_gamma V WHERE V.Vis < 3
@@ -833,11 +832,17 @@ CREATE PROCEDURE caching (IN _id INT, _n INT)
 				SELECT M.Id,  ((M.Generazione/M.Totale)*4 + (M.Paese/M.Totale)*4 + (M.Preferenze/M.Totale)*2)/10 * (C.StessaFamiglia/C.Totale) * (L.StessaLingua/L.Totale) * M1.Mem AS Pi
                 FROM movie_index M INNER JOIN codec_index C ON M.Id = C.Id INNER JOIN language_index L ON M.Id = L.Id INNER JOIN memory_index M1 ON M.Id = M1.Id
             )
-			SELECT P.Id, rank() over(ORDER BY P.Pi DESC)
-			FROM pi_greco P;
-		END
+			SELECT P.Id
+			FROM pi_greco P
+			order by P.Pi desc
+		limit _n;
+
     END $$
 DELIMITER ;
+
+
+
+
 
 -- -----------------------------------------------------
 -- Operazione 6: Registrazione di un Utente
