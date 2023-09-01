@@ -60,3 +60,36 @@ begin
     close c;
 end $$
 delimiter ;
+
+
+-- -----------------------------------------------------
+-- Aggiornamento delle ridondanze 'SommaUtenti', 'TotaleUtenti'
+-- -----------------------------------------------------
+
+drop trigger if exists ridondanza_recensioni_utenti;
+delimiter $$
+create trigger ridondanza_recensioni_utenti
+after insert on recensioneutente
+for each row
+    begin
+        declare somma_utenti, totale_utenti bigint default 0;
+        select SommaUtenti, TotaleUtenti from film where Id = new.Film into somma_utenti, totale_utenti;
+        update film set SommaUtenti = somma_utenti + new.Voto, TotaleUtenti = totale_utenti+1 where Id = new.Film;
+    end $$
+delimiter ;
+
+-- -----------------------------------------------------
+-- Aggiornamento delle ridondanze 'SommaCritica', 'TotaleCritica'
+-- -----------------------------------------------------
+
+drop trigger if exists ridondanza_recensioni_critici;
+delimiter $$
+create trigger ridondanza_recensioni_critici
+after insert on recensionecritico
+for each row
+    begin
+        declare somma_critici, totale_critici bigint default 0;
+        select SommaCritica, TotaleCritica from film where Id = new.Film into somma_critici, totale_critici;
+        update film set SommaCritica = somma_critici + new.Voto, TotaleCritica = totale_critici+1 where Id = new.Film;
+    end $$
+delimiter ;
