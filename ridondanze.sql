@@ -133,4 +133,20 @@ begin
     call aggiorna_rating_assoluto_procedura();
 end;
 
+-- -----------------------------------------------------
+-- Aggiornamento della ridondanza "BandaDisponibile"
+-- -----------------------------------------------------
 
+DROP TRIGGER IF EXISTS ridondanza_banda_disponibile;
+DELIMITER $$
+CREATE TRIGGER ridondanza_banda_disponibile
+AFTER INSERT ON Erogazione FOR EACH ROW
+	BEGIN
+		DECLARE dim BIGINT;
+        DECLARE dur INT;
+        SELECT C.Dimensione, C.Lunghezza INTO dim, dur
+        FROM Contenuto C
+        WHERE C.Id = NEW.Contenuto;
+        UPDATE Server S SET S.BandaDisponibile = S.BandaDisponibile - (dim/dur) WHERE S.Id = NEW.Server;
+	END
+DELIMITER ;
