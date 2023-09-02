@@ -1107,9 +1107,50 @@ with fruizione_trimestre_precedente_sottotitoli as(
 END $$
 
 
+-- -----------------------------------------------------
+-- Operazione 13: Classifiche
+-- -----------------------------------------------------
 
 
+drop procedure if exists classifiche;
+delimiter $$
+create procedure classifiche()
+begin
+-- distinguo i formati audio e video tramite le lettere A e V
+with contenuto_formato as (
+  select Id as Contenuto, ifnull(concat(CodificaAudio, 'A'), concat(FormatoVideo, 'V')) as Formato
+  from contenuto
+  left outer join codificavideo
+  on contenuto.Id = codificavideo.Contenuto
+),
+classifica_parziale_1 as (
+    select Abbonamento, Nazionalita, Film, Formato, sum(timediff(ifnull(erogazione.Fine, contenuto.lunghezza), erogazione.Inizio)) as secondi_riproduzione_formato
+    from contenuto
+    inner join erogazione on contenuto.Id = erogazione.Contenuto
+    inner join contenuto_formato on contenuto_formato.Contenuto = contenuto.Id
+    inner join connessione on erogazione.Dispositivo = connessione.Dispositivo and erogazione.Inizio = connessione.Inizio
+    inner join utente on utente.Codice = connessione.Utente
+    where erogazione.Inizio + interval 3 month > current_date
+    and Abbonamento is not null
+    group by Film, Nazionalita, Abbonamento, Formato
+    order by Abbonamento, Nazionalita, Film, secondi_riproduzione_formato desc
+    ),
+    classifica_parziale_2 as (select u.Abbonamento, u.Nazionalita, Film, sum(timediff(ifnull(erogazione.Fine, contenuto.Lunghezza), erogazione.Inizio)) as secondi_riproduzione_film
+    from contenuto inner join erogazione on contenuto.Id = erogazione.Contenuto
+    inner join connessione c on erogazione.Dispositivo = c.Dispositivo and erogazione.Inizio = c.Inizio
+    inner join utente u on c.Utente = u.Codice
+    where erogazione.Inizio + interval 3 month > current_date
+    and Abbonamento is not null
+    group by u.Abbonamento, u.Nazionalita, Contenuto.Film
+    order by Abbonamento, Nazionalita, secondi_riproduzione_film desc)
 
+    select Abbonamento, Nazionalita, Film, secondi_riproduzione_film, Formato, secondi_riproduzione_formato/secondi_riproduzione_film*100 as percentuale_riproduzione
+    from classifica_parziale_1 natural join classifica_parziale_2
+    where secondi_riproduzione_film is not null
+    and secondi_riproduzione_formato is not null
+    order by Abbonamento, Nazionalita, secondi_riproduzione_film, secondi_riproduzione_formato desc;
+end $$
+delimiter ;
 
 
 
