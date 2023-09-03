@@ -984,6 +984,7 @@ delimiter ;
 -- Operazione 10: Bilanciamento del Carico
 -- -----------------------------------------------------
 
+ -- indice sigma
 
 drop procedure if exists indice_sigma;
 delimiter $$
@@ -1019,7 +1020,105 @@ begin
 end $$
 delimiter ;
 
+-- coefficiente eta
 
+drop procedure if exists coefficiente_eta;
+delimiter $$
+create procedure  coefficiente_eta(in _contenuto int, in server_target int, in server_destinazione int, out eta_ double)
+begin
+    declare vis int default 0;
+    declare b_disp_media_target, b_disp_media_destinazione, num bigint default 0;
+    declare distanza_server, lat_d, lon_d, lat_t, lon_t, dim double default 0;
+    select Latitudine, Longitudine into lat_t, lon_t
+    from server
+    where Id = server_target;
+
+    select Latitudine, Longitudine into lat_d, lon_d
+    from server
+    where Id = server_destinazione;
+
+    select count(*) into vis
+    from erogazione
+    where Contenuto = _contenuto
+    and Server = server_target
+    and Inizio + interval 30 day >= current_date;
+
+    select Dimensione/1000000 into dim
+    from contenuto
+    where Id = _contenuto;
+
+    select (Server.LarghezzaBanda*30*24*3600 - sum(Contenuto.Dimensione))/1000000000000 into b_disp_media_target
+    from server
+    inner join erogazione
+        on erogazione.Server = Server.Id
+    inner join contenuto
+        on contenuto.Id = erogazione.Contenuto
+    where Server.Id = server_target
+    and erogazione.Inizio + interval 30 day >= current_date
+    group by Server.LarghezzaBanda;
+
+    select (Server.LarghezzaBanda*30*24*3600 - sum(Contenuto.Dimensione))/1000000000000 into b_disp_media_destinazione
+    from server
+    inner join erogazione
+        on erogazione.Server = Server.Id
+    inner join contenuto
+        on contenuto.Id = erogazione.Contenuto
+    where Server.Id = server_destinazione
+    and erogazione.Inizio + interval 30 day >= current_date
+    group by server.LarghezzaBanda;
+
+    set distanza_server = (power(power((lat_t-lat_d),2)+power((lon_t-lon_d),2), 0.5));
+
+    set num = vis*dim*(b_disp_media_destinazione- b_disp_media_target);
+    set eta_ = num /distanza_server;
+end $$
+delimiter ;
+
+-- procedura finale
+
+drop procedure if exists bilanciamento_carico;
+delimiter $$
+    create procedure bilanciamento_carico(in _server_target int, in _n int, out sigma_ double )
+    begin
+    declare s_d, c int default 0;
+    declare _eta double default 0;
+    declare finito tinyint(1) default 0;
+    declare cur cursor for
+    select server.Id as server_destinazione, contenuto.Id as contenuto_da_spostare
+    from server cross join contenuto
+    where (server.Id, contenuto.Id) not in (
+        select Server, Contenuto
+        from possessoserver
+        )
+    and contenuto.Id in (
+        select Contenuto
+        from possessoserver
+        where Server = 1
+        );
+    declare continue handler for not found set finito = 1;
+    create table provvisoria_bilanciamento(
+        `Server` int not null,
+        `Contenuto` int not null,
+        `Eta` double not null
+    );
+    open cur;
+    scan : loop
+        fetch cur into s_d, c;
+        call coefficiente_eta(c, _server_target, s_d, _eta);
+        insert into provvisoria_bilanciamento values (s_d, c, _eta);
+        if finito
+        then leave scan;
+        end if;
+    end loop ;
+    close cur;
+    call indice_sigma(1, sigma_);
+    select _server_target as Da, Server as A, Contenuto
+    from provvisoria_bilanciamento
+    order by Eta desc
+    limit _n;
+    drop table provvisoria_bilanciamento;
+         end $$
+delimiter ;
 
 -- -----------------------------------------------------
 -- Operazione 11: Fruizione Media dei Vincoli dell'Abbonamento
