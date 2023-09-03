@@ -464,6 +464,46 @@ BEGIN
 END $$
 DELIMITER ;
 
+
+-- un contenuto può comparire nella tabella CodificaVideo solo se ha l'attributo CodificaAudio nullo
+
+drop trigger if exists codifica_video_codifica_audio;
+delimiter $$
+create trigger codifica_video_codifica_audio
+    before insert on codificavideo
+    for each row
+    begin
+        declare cAudio int default 0;
+        select CodificaAudio into cAudio
+        from contenuto
+        where Id = new.Contenuto;
+        if cAudio is not null then
+            SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Un contenuto può comparire nella tabella CodificaVideo solo se il suo attributo CodificaAudio è nullo';
+        end if;
+    end $$
+    delimiter ;
+
+-- Un contenuto può comparire nella tabella Sottotitoli solo se il suo attributo LinguaAudio è nullo
+
+drop trigger if exists doppiaggio_sottotitoli;
+delimiter $$
+create trigger doppiaggio_sottotitoli
+    before insert on sottotitoli
+    for each row
+    begin
+        declare lAudio varchar(45) default '';
+        select LinguaAudio into lAudio
+        from contenuto where Id = new.Contenuto;
+        if lAudio is not null then
+            SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Un contenuto può comparire nella tabella Sottotitoli solo se il suo attributo LinguaAudio è nullo';
+        end if ;
+    end $$
+
+delimiter ;
+
+
 -- Vincoli di integrità referenziale
 -- Ogni film in Appartenenza deve comparire nella tabella Film
 DROP TRIGGER IF EXISTS appartenenza_film_film;
