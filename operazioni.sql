@@ -981,6 +981,47 @@ end $$
 delimiter ;
 
 -- -----------------------------------------------------
+-- Operazione 10: Bilanciamento del Carico
+-- -----------------------------------------------------
+
+
+drop procedure if exists indice_sigma;
+delimiter $$
+create procedure indice_sigma(in _server int, out sigma_ double)
+begin
+    declare beta_1, beta_2, beta_3 double default 0;
+    declare larghezza_banda bigint default 0;
+
+    select LarghezzaBanda into larghezza_banda
+    from server where Id = _server;
+
+    select 100*sum(Contenuto.Dimensione)/(larghezza_banda*3600*24*30) into beta_1
+    from erogazione
+    inner join contenuto on erogazione.Contenuto = contenuto.Id
+    where erogazione.Server = _server
+    and erogazione.Inizio + interval 90 day > current_date
+    and erogazione.Inizio + interval 60 day <= current_date;
+
+    select 100*sum(Contenuto.Dimensione)/(larghezza_banda*3600*24*30) into beta_2
+    from erogazione
+    inner join contenuto on erogazione.Contenuto = contenuto.Id
+    where erogazione.Server = _server
+    and erogazione.Inizio + interval 60 day > current_date
+    and erogazione.Inizio + interval 30 day <= current_date;
+
+    select 100*sum(Contenuto.Dimensione)/(larghezza_banda*3600*24*30) into beta_3
+    from erogazione
+    inner join contenuto on erogazione.Contenuto = contenuto.Id
+    where erogazione.Server = _server
+    and erogazione.Inizio + interval 30 day > current_date;
+
+    set sigma_ = (beta_3 + (100-beta_3)*(beta_3-beta_2)/2+ (100-beta_3)*(beta_3 - beta_1)/2)/2 + 50;
+end $$
+delimiter ;
+
+
+
+-- -----------------------------------------------------
 -- Operazione 11: Fruizione Media dei Vincoli dell'Abbonamento
 -- -----------------------------------------------------
 
