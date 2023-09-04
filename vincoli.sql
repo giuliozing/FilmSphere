@@ -1416,15 +1416,16 @@ CREATE TRIGGER utente_cartadicredito_cartadicredito
 BEFORE INSERT ON Utente FOR EACH ROW
 BEGIN
   DECLARE temp INT DEFAULT 0;
-  SET temp = 
+  SET temp =
     (SELECT COUNT(*)
      FROM CartaDiCredito C
      WHERE C.Numero= NEW.CartaDiCredito
     );
-  IF temp = 0 THEN
+  IF temp = 0 and new.CartaDiCredito is not null THEN
     SIGNAL SQLSTATE '45000'
     SET MESSAGE_TEXT = 'Ogni carta di credito nella tabella Utente deve comparire nella tabella CartaDiCredito';
   END IF;
 
 END $$
 DELIMITER ;
+

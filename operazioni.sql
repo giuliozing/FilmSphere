@@ -875,15 +875,14 @@ DELIMITER ;
 DROP PROCEDURE IF EXISTS registrazione_utente;
 
 DELIMITER $$
-
 CREATE PROCEDURE registrazione_utente (IN _nome VARCHAR(255), _cognome VARCHAR(255), _email VARCHAR(255), _password VARCHAR(255), _nazionalita VARCHAR(45), _datanascita DATE, OUT _check BOOL)
 	BEGIN
 		DECLARE temp1, temp2, temp3 INT;
         SET temp1 = (SELECT COUNT(*) FROM utente U WHERE U.Email = _email);
         SET temp2 = (SELECT COUNT(*) FROM paese P WHERE P.Nome = _nazionalita);
-        SET temp3 = 1 + (SELECT max(U.Codice) FROM utente);
+        SET temp3 = 1 + (SELECT max(U.Codice) FROM utente U);
 
-        IF temp1 = 1 OR temp2 = 0 OR _datanascita > CURRENT_DATE THEN
+        IF temp1 = 1 OR temp2 = 0 OR _datanascita > CURRENT_DATE OR _email not like '%@%.%'THEN
 			SET _check = FALSE;
 		ELSE
 			INSERT INTO Utente(Nome, Cognome, Email, Password, Nazionalita, DataNascita, Codice)

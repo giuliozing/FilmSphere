@@ -445,7 +445,7 @@ CREATE TABLE IF NOT EXISTS PLZ.`Utente` (
     `Password` VARCHAR(255) NOT NULL,
   `DataNascita` DATE NOT NULL,
     `Nazionalita` VARCHAR(45) NOT NULL,
-    `CartaDiCredito` BIGINT NOT NULL,
+    `CartaDiCredito` BIGINT,
     `Abbonamento` VARCHAR(45),
     `Inizio` DATE,
   PRIMARY KEY (`Codice`))
