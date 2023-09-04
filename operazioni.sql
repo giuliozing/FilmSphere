@@ -868,7 +868,7 @@ DELIMITER ;
 
 
 -- -----------------------------------------------------
--- Operazione 6: Registrazione di un Utente
+-- Operazione 6a: Registrazione di un Utente
 -- -----------------------------------------------------
 
 
@@ -893,7 +893,7 @@ CREATE PROCEDURE registrazione_utente (IN _nome VARCHAR(255), _cognome VARCHAR(2
 DELIMITER ;
 
 -- -----------------------------------------------------
--- Operazione 7: Sottoscrizione del Servizio da parte di un utente
+-- Operazione 6b: Sottoscrizione del Servizio da parte di un utente
 -- -----------------------------------------------------
 
 DROP PROCEDURE IF EXISTS sottoscrizione_servizio;
@@ -923,7 +923,7 @@ CREATE PROCEDURE sottoscrizione_servizio (IN _codice INT, _abbonamento VARCHAR(4
 DELIMITER ;
 
 -- -----------------------------------------------------
--- Operazione 8: Emissione di una Fattura
+-- Operazione 7: Emissione di una Fattura
 -- -----------------------------------------------------
 
 DROP PROCEDURE IF EXISTS emissione_fattura;
@@ -953,7 +953,7 @@ end $$
 DELIMITER ;
 
 -- -----------------------------------------------------
--- Operazione 9: Inserimento di una recensione
+-- Operazione 8: Inserimento di una recensione
 -- -----------------------------------------------------
 
 drop procedure if exists inserisci_recensione;
@@ -983,7 +983,7 @@ end $$
 delimiter ;
 
 -- -----------------------------------------------------
--- Operazione 10: Bilanciamento del Carico
+-- Operazione 9: Bilanciamento del Carico
 -- -----------------------------------------------------
 
  -- indice sigma
@@ -1123,7 +1123,7 @@ delimiter $$
 delimiter ;
 
 -- -----------------------------------------------------
--- Operazione 11: Fruizione Media dei Vincoli dell'Abbonamento
+-- Operazione 10a: Fruizione Media dei Vincoli dell'Abbonamento
 -- -----------------------------------------------------
 
 
@@ -1201,7 +1201,7 @@ delimiter ;
 
 
 -- -----------------------------------------------------
--- Operazione 12: Lingue per tempo di fruizione, come audio e come sottotitoli
+-- Operazione 10b: Lingue per tempo di fruizione, come audio e come sottotitoli
 -- -----------------------------------------------------
 
 
@@ -1250,7 +1250,7 @@ END $$
 
 
 -- -----------------------------------------------------
--- Operazione 13: Classifiche
+-- Operazione 11: Classifiche
 -- -----------------------------------------------------
 
 
@@ -1297,7 +1297,7 @@ delimiter ;
 
 
 -- -----------------------------------------------------
--- Operazione 14: Fine Erogazione
+-- Operazione 12b: Fine Erogazione
 -- -----------------------------------------------------
 
 DROP PROCEDURE IF EXISTS fine_erogazione;
