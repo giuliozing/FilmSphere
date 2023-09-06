@@ -579,19 +579,27 @@ delimiter ;
 
 drop procedure if exists scegli_server;
 delimiter $$
-create procedure scegli_server(_IP bigint, _contenuto int)
+create procedure scegli_server(_inizio timestamp, _dispositivo int, _contenuto int)
 begin
     declare paese_di_connessione varchar(45) default '';
     declare bandadisponibile bigint default 0;
     declare s, jitter int default 0;
+    declare serverfinale int default 0;
+    declare maxId int default 0;
     declare latitudine_p, longitudine_p, latitudine_s, longitudine_s,chi double default 0;
     declare finito tinyint(1) default 0;
+    declare _IP bigint default 0;
     -- individuo i server che possiedono il contenuto
     declare c cursor for
         select Server
         from possessoserver
         where Contenuto=_contenuto;
     declare continue handler for not found set finito=1;
+    -- risalgo all'indirizzo IP
+    select IP into _IP
+    from connessione
+    where Inizio = _inizio
+    and Dispositivo = _dispositivo;
     -- risalgo al Paese da cui si sta collegando l'utente
     select Nome
     from Paese
@@ -622,7 +630,13 @@ begin
     from provvisoria_server p
     order by p.Chi desc
     limit 1;
+    select p.Server into serverfinale
+    from provvisoria_server p
+    order by p.Chi desc
+    limit 1;
     drop table provvisoria_server;
+    select max(Id) from erogazione into maxId;
+    insert into erogazione values (maxId+1, current_timestamp, null, _contenuto, serverfinale, _inizio, _dispositivo);
 end $$
 delimiter ;
 

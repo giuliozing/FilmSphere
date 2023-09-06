@@ -148,5 +148,5 @@ AFTER INSERT ON Erogazione FOR EACH ROW
         FROM Contenuto C
         WHERE C.Id = NEW.Contenuto;
         UPDATE Server S SET S.BandaDisponibile = S.BandaDisponibile - (dim/dur) WHERE S.Id = NEW.Server;
-	END
+	END $$
 DELIMITER ;
