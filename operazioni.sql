@@ -483,7 +483,7 @@ begin
     from fattura
     where Utente = _utente
     and Saldo is null
-    and current_date>Scadenza;
+    and current_date>Emissione + interval 30 day;
     if fatture_inevase > 0
         then select  'Utente non in regola con i pagamenti';
     else

@@ -158,7 +158,6 @@ ENGINE = InnoDB DEFAULT CHARSET=latin1;
 CREATE TABLE IF NOT EXISTS PLZ.`Fattura` (
   `Id` INT NOT NULL,
   `Saldo` DATETIME,
-  `Scadenza` DATETIME NOT NULL,
   `Emissione` DATETIME NOT NULL,
   `Utente` INT NOT NULL,
   `CartaDiCredito` BIGINT NOT NULL,
