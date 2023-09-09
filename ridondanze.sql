@@ -164,3 +164,28 @@ AFTER UPDATE ON Erogazione FOR EACH ROW
 		UPDATE Server S SET S.BandaDisponibile = S.BandaDisponibile + (dim/dur) WHERE S.Id = NEW.Server;
 	END $$
 DELIMITER ;
+
+-- -----------------------------------------------------
+-- Aggiornamento della ridondanza "Visualizzazioni"
+-- -----------------------------------------------------
+
+DROP TRIGGER IF EXISTS ridondanza_visualizzazioni;
+DELIMITER $$
+CREATE TRIGGER ridondanza_visualizazioni
+AFTER INSERT ON Erogazione FOR EACH ROW
+	BEGIN
+		DECLARE prec, film_prec, film_new INT;
+        SELECT LAG(E.Contenuto, 1) OVER(PARTITION BY E.InizioConnessione, E.Dispositivo ORDER BY E.Inizio) INTO prec
+        FROM Erogazione E
+        WHERE E.Id = NEW.Id;
+        SELECT C.Film INTO film_prec
+        FROM Contenuto C
+        WHERE C.Id = prec;
+		SELECT C.Film INTO film_new
+        FROM Contenuto C
+        WHERE C.Id = NEW.Contenuto;
+        IF film_prec <> film_new THEN
+			UPDATE Film F SET F.Visualizzazioni = F.Visualizzazioni + 1 WHERE F.Id = film_new;
+		END IF;
+	END $$
+DELIMITER ;
