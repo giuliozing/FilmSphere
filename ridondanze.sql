@@ -2,6 +2,7 @@
 -- -----------------------------------------------------
 -- Inizializzazione della Ridondanza BandaDisponibile
 -- -----------------------------------------------------
+
 drop procedure if exists inizializza_banda_disponibile;
 delimiter $$
 create procedure inizializza_banda_disponibile()
@@ -188,4 +189,32 @@ AFTER INSERT ON Erogazione FOR EACH ROW
 			UPDATE Film F SET F.Visualizzazioni = F.Visualizzazioni + 1 WHERE F.Id = film_new;
 		END IF;
 	END $$
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- Inizializzazione della Ridondanza Visualizzazioni
+-- -----------------------------------------------------
+
+DROP PROCEDURE IF EXISTS inizializza_visualizzazioni;
+
+DELIMITER $$
+
+CREATE PROCEDURE inizializza_visualizzazioni ()
+	BEGIN
+		REPLACE INTO Film
+	        SELECT F.Id, F.Titolo, F.Descrizione, F.Anno, F.Durata, F.Paese, F.SommaCritica, F.TotaleCritica, F.SommaUtenti, F.TotaleUtenti, F.RatingAssoluto, V.totale_views_per_film AS Visualizzazioni
+		FROM Film F INNER JOIN (
+					SELECT C.Film, SUM(V1.vpc) AS totale_views_per_film
+					FROM (
+					      SELECT N.Contenuto, count(*) AS vpc
+					      FROM (
+						    SELECT *, LAG(E.Contenuto, 1) OVER(PARTITION BY E.InizioConnessione, E.Dispositivo ORDER BY E.Inizio) AS _prec
+						    FROM Erogazione E
+						    WHERE E.Contenuto <> _prec
+						    ) AS N 
+					      GROUP BY N.Contenuto
+					      ) AS V1 INNER JOIN Contenuto C ON C.Id = V1.Contenuto
+					GROUP BY C.Film
+					) AS V ON V.Film = F.Id;
+    END $$
 DELIMITER ;
