@@ -222,4 +222,4 @@ CREATE PROCEDURE inizializza_visualizzazioni ()
     END $$
 DELIMITER ;
 
-inizializza_visualizzazioni();
+call inizializza_visualizzazioni();
