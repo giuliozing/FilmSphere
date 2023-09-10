@@ -208,9 +208,12 @@ CREATE PROCEDURE inizializza_visualizzazioni ()
 					FROM (
 					      SELECT N.Contenuto, count(*) AS vpc
 					      FROM (
-						    SELECT *, LAG(E.Contenuto, 1) OVER(PARTITION BY E.InizioConnessione, E.Dispositivo ORDER BY E.Inizio) AS _prec
-						    FROM Erogazione E
-						    WHERE E.Contenuto <> _prec
+						    SELECT *
+						    FROM (
+							  SELECT *, LAG(E.Contenuto, 1) OVER(PARTITION BY E.InizioConnessione, E.Dispositivo ORDER BY E.Inizio) AS _prec
+							  FROM Erogazione E
+							  ) AS Q
+						    WHERE Q._prec <> Q.Contenuto
 						    ) AS N 
 					      GROUP BY N.Contenuto
 					      ) AS V1 INNER JOIN Contenuto C ON C.Id = V1.Contenuto
