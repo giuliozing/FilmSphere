@@ -1266,8 +1266,6 @@ END $$
 -- -----------------------------------------------------
 -- Operazione 11: Classifiche
 -- -----------------------------------------------------
-
-
 drop procedure if exists classifiche;
 delimiter $$
 create procedure classifiche()
@@ -1280,7 +1278,7 @@ with contenuto_formato as (
   on contenuto.Id = codificavideo.Contenuto
 ),
 classifica_parziale_1 as (
-    select Abbonamento, Nazionalita, Film, Formato, sum(timediff(ifnull(erogazione.Fine, contenuto.lunghezza), erogazione.Inizio)) as secondi_riproduzione_formato
+    select Abbonamento, Nazionalita, Film, Formato, sum(timediff(ifnull(erogazione.Fine, current_timestamp), erogazione.Inizio)) as secondi_riproduzione_formato
     from contenuto
     inner join erogazione on contenuto.Id = erogazione.Contenuto
     inner join contenuto_formato on contenuto_formato.Contenuto = contenuto.Id
@@ -1291,7 +1289,7 @@ classifica_parziale_1 as (
     group by Film, Nazionalita, Abbonamento, Formato
     order by Abbonamento, Nazionalita, Film, secondi_riproduzione_formato desc
     ),
-    classifica_parziale_2 as (select u.Abbonamento, u.Nazionalita, Film, sum(timediff(ifnull(erogazione.Fine, contenuto.Lunghezza), erogazione.Inizio)) as secondi_riproduzione_film
+    classifica_parziale_2 as (select u.Abbonamento, u.Nazionalita, Film, sum(timediff(ifnull(erogazione.Fine, current_timestamp), erogazione.Inizio)) as secondi_riproduzione_film
     from contenuto inner join erogazione on contenuto.Id = erogazione.Contenuto
     inner join connessione c on erogazione.Dispositivo = c.Dispositivo and erogazione.Inizio = c.Inizio
     inner join utente u on c.Utente = u.Codice
@@ -1307,11 +1305,8 @@ classifica_parziale_1 as (
     order by Abbonamento, Nazionalita, secondi_riproduzione_film, secondi_riproduzione_formato desc;
 end $$
 delimiter ;
-
-
-
 -- -----------------------------------------------------
--- Operazione 12b: Fine Erogazione
+-- Operazione 12: Fine Erogazione
 -- -----------------------------------------------------
 
 DROP PROCEDURE IF EXISTS fine_erogazione;
