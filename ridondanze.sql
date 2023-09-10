@@ -218,3 +218,5 @@ CREATE PROCEDURE inizializza_visualizzazioni ()
 					) AS V ON V.Film = F.Id;
     END $$
 DELIMITER ;
+
+inizializza_visualizzazioni();
