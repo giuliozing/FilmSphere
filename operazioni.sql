@@ -1140,14 +1140,13 @@ delimiter ;
 -- Operazione 10a: Fruizione Media dei Vincoli dell'Abbonamento
 -- -----------------------------------------------------
 
-
 drop procedure if exists fruizione_vincoli_abbonamento;
 delimiter $$
 create procedure fruizione_vincoli_abbonamento(in mese int, in anno int)
 begin
    with base as (
        -- analizziamo la fascia Teen, per piano abbonamento e paese
-    select 'Fascia Teen' as Fascia, utente.Codice, paese.Nome as Paese, utente.Abbonamento, sum(contenuto.Lunghezza)/(3600*abbonamento.MaxOre) as fruizione_tempo, sum(contenuto.Dimensione)/(1000000000*abbonamento.MaxGB) as fruizione_GB
+    select 'Fascia Teen' as Fascia, utente.Codice, paese.Nome as Paese, utente.Abbonamento, sum(timediff(ifnull(erogazione.Fine, current_timestamp), erogazione.Inizio))/(3600*abbonamento.MaxOre) as fruizione_tempo, sum(contenuto.dimensione/contenuto.lunghezza*if(timediff(ifnull(erogazione.Fine, current_timestamp), erogazione.Inizio)>Contenuto.Lunghezza, contenuto.Lunghezza, timediff(ifnull(erogazione.Fine, current_timestamp), erogazione.Inizio)))/(1000000000*abbonamento.MaxGB) as fruizione_GB
     from paese cross join abbonamento
     inner join utente
     on utente.Nazionalita = paese.Nome
@@ -1163,7 +1162,7 @@ begin
     union
 
     -- fascia Young
-    select 'Fascia Young' as Fascia, utente.Codice, paese.Nome as Paese, utente.Abbonamento, sum(contenuto.Lunghezza)/(3600*abbonamento.MaxOre) as fruizione_tempo, sum(contenuto.Dimensione)/(1000000000*abbonamento.MaxGB) as fruizione_GB
+    select 'Fascia Young' as Fascia, utente.Codice, paese.Nome as Paese, utente.Abbonamento, sum(timediff(ifnull(erogazione.Fine, current_timestamp), erogazione.Inizio))/(3600*abbonamento.MaxOre) as fruizione_tempo, sum(contenuto.dimensione/contenuto.lunghezza*if(timediff(ifnull(erogazione.Fine, current_timestamp), erogazione.Inizio)>Contenuto.Lunghezza, contenuto.Lunghezza, timediff(ifnull(erogazione.Fine, current_timestamp), erogazione.Inizio)))/(1000000000*abbonamento.MaxGB) as fruizione_GB
     from paese cross join abbonamento
     inner join utente
     on utente.Nazionalita = paese.Nome
@@ -1178,7 +1177,7 @@ begin
 
     union
     -- fascia Middle-Aged
-    select 'Fascia Middle-Aged' as Fascia, utente.Codice, paese.Nome as Paese, utente.Abbonamento, sum(contenuto.Lunghezza)/(3600*abbonamento.MaxOre) as fruizione_tempo, sum(contenuto.Dimensione)/(1000000000*abbonamento.MaxGB) as fruizione_GB
+    select 'Fascia Middle-Aged' as Fascia, utente.Codice, paese.Nome as Paese, utente.Abbonamento, sum(timediff(ifnull(erogazione.Fine, current_timestamp), erogazione.Inizio))/(3600*abbonamento.MaxOre) as fruizione_tempo, sum(contenuto.dimensione/contenuto.lunghezza*if(timediff(ifnull(erogazione.Fine, current_timestamp), erogazione.Inizio)>Contenuto.Lunghezza, contenuto.Lunghezza, timediff(ifnull(erogazione.Fine, current_timestamp), erogazione.Inizio)))/(1000000000*abbonamento.MaxGB) as fruizione_GB
     from paese cross join abbonamento
     inner join utente
     on utente.Nazionalita = paese.Nome
@@ -1194,7 +1193,7 @@ begin
     -- Fascia Senior
     union
 
-    select 'Fascia Senior' as Fascia, utente.Codice, paese.Nome as Paese, utente.Abbonamento, sum(contenuto.Lunghezza)/(3600*abbonamento.MaxOre) as fruizione_tempo, sum(contenuto.Dimensione)/(1000000000*abbonamento.MaxGB) as fruizione_GB
+    select 'Fascia Senior' as Fascia, utente.Codice, paese.Nome as Paese, utente.Abbonamento, sum(timediff(ifnull(erogazione.Fine, current_timestamp), erogazione.Inizio))/(3600*abbonamento.MaxOre) as fruizione_tempo, sum(contenuto.dimensione/contenuto.lunghezza*if(timediff(ifnull(erogazione.Fine, current_timestamp), erogazione.Inizio)>Contenuto.Lunghezza, contenuto.Lunghezza, timediff(ifnull(erogazione.Fine, current_timestamp), erogazione.Inizio)))/(1000000000*abbonamento.MaxGB) as fruizione_GB
     from paese cross join abbonamento
     inner join utente
     on utente.Nazionalita = paese.Nome
