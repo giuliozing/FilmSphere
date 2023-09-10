@@ -747,7 +747,7 @@ BEGIN
 END $$
 DELIMITER ;
 
--- Ogni timestamp di inzio connessione nella tabella Erogazione deve comparire nella tabella Connessione
+-- Ogni timestamp di inizio connessione nella tabella Erogazione deve comparire nella tabella Connessione
 DROP TRIGGER IF EXISTS erogazione_inizioconnessione_connessione;
 
 DELIMITER $$
@@ -763,7 +763,7 @@ BEGIN
     );
   IF temp = 0 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni timestamp di inzio connessione nella tabella Erogazione deve comparire nella tabella Connessione';
+    SET MESSAGE_TEXT = 'Ogni timestamp di inizio connessione nella tabella Erogazione deve comparire nella tabella Connessione';
   END IF;
 
 END $$
