@@ -2,6 +2,7 @@
 -- -----------------------------------------------------
 -- Inizializzazione della Ridondanza BandaDisponibile
 -- -----------------------------------------------------
+
 drop procedure if exists inizializza_banda_disponibile;
 delimiter $$
 create procedure inizializza_banda_disponibile()
@@ -137,9 +138,9 @@ end;
 -- Aggiornamento della ridondanza "BandaDisponibile"
 -- -----------------------------------------------------
 
-DROP TRIGGER IF EXISTS ridondanza_banda_disponibile;
+DROP TRIGGER IF EXISTS ridondanza_banda_disponibile_1;
 DELIMITER $$
-CREATE TRIGGER ridondanza_banda_disponibile
+CREATE TRIGGER ridondanza_banda_disponibile_1
 AFTER INSERT ON Erogazione FOR EACH ROW
 	BEGIN
 		DECLARE dim BIGINT;
@@ -149,4 +150,71 @@ AFTER INSERT ON Erogazione FOR EACH ROW
         WHERE C.Id = NEW.Contenuto;
         UPDATE Server S SET S.BandaDisponibile = S.BandaDisponibile - (dim/dur) WHERE S.Id = NEW.Server;
 	END $$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS ridondanza_banda_disponibile_2;
+DELIMITER $$
+CREATE TRIGGER ridondanza_banda_disponibile_2
+AFTER UPDATE ON Erogazione FOR EACH ROW
+	BEGIN
+		DECLARE dim BIGINT;
+        DECLARE dur INT;
+        SELECT C.Dimensione, C.Lunghezza INTO dim, dur
+        FROM Contenuto C
+        WHERE C.Id = NEW.Contenuto;
+		UPDATE Server S SET S.BandaDisponibile = S.BandaDisponibile + (dim/dur) WHERE S.Id = NEW.Server;
+	END $$
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- Aggiornamento della ridondanza "Visualizzazioni"
+-- -----------------------------------------------------
+
+DROP TRIGGER IF EXISTS ridondanza_visualizzazioni;
+DELIMITER $$
+CREATE TRIGGER ridondanza_visualizazioni
+AFTER INSERT ON Erogazione FOR EACH ROW
+	BEGIN
+		DECLARE prec, film_prec, film_new INT;
+        SELECT LAG(E.Contenuto, 1) OVER(PARTITION BY E.InizioConnessione, E.Dispositivo ORDER BY E.Inizio) INTO prec
+        FROM Erogazione E
+        WHERE E.Id = NEW.Id;
+        SELECT C.Film INTO film_prec
+        FROM Contenuto C
+        WHERE C.Id = prec;
+		SELECT C.Film INTO film_new
+        FROM Contenuto C
+        WHERE C.Id = NEW.Contenuto;
+        IF film_prec <> film_new THEN
+			UPDATE Film F SET F.Visualizzazioni = F.Visualizzazioni + 1 WHERE F.Id = film_new;
+		END IF;
+	END $$
+DELIMITER ;
+
+-- -----------------------------------------------------
+-- Inizializzazione della Ridondanza Visualizzazioni
+-- -----------------------------------------------------
+
+DROP PROCEDURE IF EXISTS inizializza_visualizzazioni;
+
+DELIMITER $$
+
+CREATE PROCEDURE inizializza_visualizzazioni ()
+	BEGIN
+		REPLACE INTO Film
+	        SELECT F.Id, F.Titolo, F.Descrizione, F.Anno, F.Durata, F.Paese, F.SommaCritica, F.TotaleCritica, F.SommaUtenti, F.TotaleUtenti, F.RatingAssoluto, V.totale_views_per_film AS Visualizzazioni
+		FROM Film F INNER JOIN (
+					SELECT C.Film, SUM(V1.vpc) AS totale_views_per_film
+					FROM (
+					      SELECT N.Contenuto, count(*) AS vpc
+					      FROM (
+						    SELECT *, LAG(E.Contenuto, 1) OVER(PARTITION BY E.InizioConnessione, E.Dispositivo ORDER BY E.Inizio) AS _prec
+						    FROM Erogazione E
+						    WHERE E.Contenuto <> _prec
+						    ) AS N 
+					      GROUP BY N.Contenuto
+					      ) AS V1 INNER JOIN Contenuto C ON C.Id = V1.Contenuto
+					GROUP BY C.Film
+					) AS V ON V.Film = F.Id;
+    END $$
 DELIMITER ;
