@@ -172,13 +172,19 @@ DELIMITER ;
 
 DROP TRIGGER IF EXISTS ridondanza_visualizzazioni;
 DELIMITER $$
-CREATE TRIGGER ridondanza_visualizazioni
+CREATE TRIGGER ridondanza_visualizzazioni
 AFTER INSERT ON Erogazione FOR EACH ROW
 	BEGIN
 		DECLARE prec, film_prec, film_new INT;
-        SELECT LAG(E.Contenuto, 1) OVER(PARTITION BY E.InizioConnessione, E.Dispositivo ORDER BY E.Inizio) INTO prec
-        FROM Erogazione E
-        WHERE E.Id = NEW.Id;
+        with tab_1 as (SELECT LAG(E.Contenuto, 1)
+                                  OVER (PARTITION BY E.InizioConnessione, E.Dispositivo ORDER BY E.Inizio) as contenuto_precedente,
+                              E.Contenuto,
+                              E.Id
+                       FROM Erogazione E
+                       WHERE E.InizioConnessione = NEW.InizioConnessione
+                         and E.Dispositivo = NEW.Dispositivo
+        )
+		select contenuto_precedente into prec from tab_1 where Id = new.Id ;
         SELECT C.Film INTO film_prec
         FROM Contenuto C
         WHERE C.Id = prec;
@@ -190,6 +196,7 @@ AFTER INSERT ON Erogazione FOR EACH ROW
 		END IF;
 	END $$
 DELIMITER ;
+
 
 -- -----------------------------------------------------
 -- Inizializzazione della Ridondanza Visualizzazioni
