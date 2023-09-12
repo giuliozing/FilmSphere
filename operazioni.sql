@@ -1301,9 +1301,10 @@ classifica_parziale_1 as (
     from classifica_parziale_1 natural join classifica_parziale_2
     where secondi_riproduzione_film is not null
     and secondi_riproduzione_formato is not null
-    order by Abbonamento, Nazionalita, secondi_riproduzione_film, secondi_riproduzione_formato desc;
+    order by Abbonamento, Nazionalita, secondi_riproduzione_film desc, secondi_riproduzione_formato desc;
 end $$
 delimiter ;
+
 
 -- -----------------------------------------------------
 -- Operazione 12: Fine Erogazione
