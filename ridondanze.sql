@@ -129,7 +129,7 @@ call aggiorna_rating_assoluto_procedura();
 
 drop event if exists aggiorna_rating_assoluto;
 create event aggiorna_rating_assoluto_evento
-on schedule every 1 day starts '2023-09-15-00:00:00' do
+on schedule every 1 day starts '2023-09-30-00:00:00' do
 begin
     call aggiorna_rating_assoluto_procedura();
 end;
@@ -167,46 +167,14 @@ AFTER UPDATE ON Erogazione FOR EACH ROW
 DELIMITER ;
 
 -- -----------------------------------------------------
--- Aggiornamento della ridondanza "Visualizzazioni"
--- -----------------------------------------------------
-
-DROP TRIGGER IF EXISTS ridondanza_visualizzazioni;
-DELIMITER $$
-CREATE TRIGGER ridondanza_visualizzazioni
-AFTER INSERT ON Erogazione FOR EACH ROW
-	BEGIN
-		DECLARE prec, film_prec, film_new INT;
-        with tab_1 as (SELECT LAG(E.Contenuto, 1)
-                                  OVER (PARTITION BY E.InizioConnessione, E.Dispositivo ORDER BY E.Inizio) as contenuto_precedente,
-                              E.Contenuto,
-                              E.Id
-                       FROM Erogazione E
-                       WHERE E.InizioConnessione = NEW.InizioConnessione
-                         and E.Dispositivo = NEW.Dispositivo
-        )
-		select contenuto_precedente into prec from tab_1 where Id = new.Id ;
-        SELECT C.Film INTO film_prec
-        FROM Contenuto C
-        WHERE C.Id = prec;
-		SELECT C.Film INTO film_new
-        FROM Contenuto C
-        WHERE C.Id = NEW.Contenuto;
-        IF film_prec <> film_new THEN
-			UPDATE Film F SET F.Visualizzazioni = F.Visualizzazioni + 1 WHERE F.Id = film_new;
-		END IF;
-	END $$
-DELIMITER ;
-
-
--- -----------------------------------------------------
 -- Inizializzazione della Ridondanza Visualizzazioni
 -- -----------------------------------------------------
 
-DROP PROCEDURE IF EXISTS inizializza_visualizzazioni;
+DROP PROCEDURE IF EXISTS aggiorna_visualizzazioni;
 
 DELIMITER $$
 
-CREATE PROCEDURE inizializza_visualizzazioni ()
+CREATE PROCEDURE aggiorna_visualizzazioni ()
 	BEGIN
 		REPLACE INTO Film
 	        SELECT F.Id, F.Titolo, F.Descrizione, F.Anno, F.Durata, F.Paese, F.SommaCritica, F.TotaleCritica, F.SommaUtenti, F.TotaleUtenti, F.RatingAssoluto, V.totale_views_per_film AS Visualizzazioni
@@ -229,4 +197,15 @@ CREATE PROCEDURE inizializza_visualizzazioni ()
     END $$
 DELIMITER ;
 
-call inizializza_visualizzazioni();
+call aggiorna_visualizzazioni();
+
+-- -----------------------------------------------------
+-- Aggiornamento della ridondanza "Visualizzazioni"
+-- -----------------------------------------------------
+
+drop event if exists evento_visualizzazioni;
+create event evento_visualizzazioni
+on schedule every 1 day starts '2023-09-30-00:00:00' do
+begin
+    call aggiorna_visualizzazioni();
+end;
