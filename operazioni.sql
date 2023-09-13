@@ -491,7 +491,7 @@ begin
             inner join connessione conn on conn.Inizio = e.Inizio
             and conn.Dispositivo = e.Dispositivo
             where conn.Utente = 1;
-            create table `Provvisoria`(
+            create temporary table `Provvisoria`(
                 `Film` INT NOT NULL,
             `Storico` DOUBLE NOT NULL,
             PRIMARY KEY (`Film`)
@@ -567,7 +567,7 @@ begin
         select Film from Provvisoria
         order by Storico desc
         limit _n;
-        drop table Provvisoria;
+        drop temporary table Provvisoria;
 
         end if;
 end $$
@@ -609,7 +609,7 @@ begin
     select Latitudine, Longitudine into latitudine_p, longitudine_p
     from paese
     where Nome = paese_di_connessione;
-    create table provvisoria_server (
+    create temporary table provvisoria_server (
         `Server` int not null,
         `Chi` double not null
     );
@@ -634,7 +634,7 @@ begin
     from provvisoria_server p
     order by p.Chi desc
     limit 1;
-    drop table provvisoria_server;
+    drop temporary table provvisoria_server;
     select max(Id) from erogazione into maxId;
     insert into erogazione values (maxId+1, current_timestamp, null, _contenuto, serverfinale, _inizio, _dispositivo);
 end $$
@@ -1109,10 +1109,10 @@ delimiter $$
     and contenuto.Id in (
         select Contenuto
         from possessoserver
-        where Server = 1
+        where Server = _server_target
         );
     declare continue handler for not found set finito = 1;
-    create table provvisoria_bilanciamento(
+    create temporary table provvisoria_bilanciamento(
         `Server` int not null,
         `Contenuto` int not null,
         `Eta` double not null
@@ -1120,6 +1120,7 @@ delimiter $$
     open cur;
     scan : loop
         fetch cur into s_d, c;
+
         call coefficiente_eta(c, _server_target, s_d, _eta);
         insert into provvisoria_bilanciamento values (s_d, c, _eta);
         if finito
@@ -1132,7 +1133,7 @@ delimiter $$
     from provvisoria_bilanciamento
     order by Eta desc
     limit _n;
-    drop table provvisoria_bilanciamento;
+    drop temporary table provvisoria_bilanciamento;
          end $$
 delimiter ;
 
