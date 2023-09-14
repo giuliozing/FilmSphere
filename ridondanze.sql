@@ -1,3 +1,10 @@
+-- Lorenzo Leoncini, Giulio Zingrillo. Progetto di Basi di Dati 2023
+
+-- Questo script implementa le ridondanze descritte nella sezione 5 della Documentazione.
+
+USE plz;
+
+
 
 -- -----------------------------------------------------
 -- Inizializzazione della Ridondanza BandaDisponibile

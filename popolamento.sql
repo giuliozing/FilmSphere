@@ -1,6 +1,6 @@
 -- Lorenzo Leoncini, Giulio Zingrillo. Progetto di Basi di Dati 2023
 
--- Questo script popola il database, come da sezione 9 della documentazione
+-- Questo script popola il database come da sezione 9 della documentazione
 
 
 -- -----------------------------------------------------

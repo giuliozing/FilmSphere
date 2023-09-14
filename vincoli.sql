@@ -2,6 +2,8 @@
 
 -- Questo script definisce i trigger che implementano i vincoli del database.
 
+
+
 USE plz;
 -- Vincoli intrarelazionali di dominio
 -- Numero Carta di Credito
