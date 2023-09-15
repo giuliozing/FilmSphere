@@ -13,9 +13,9 @@ DROP PROCEDURE IF EXISTS rating_assoluto;
 
 DELIMITER $$
 
-CREATE PROCEDURE rating_assoluto (IN _idfilm INT, OUT _rating INT)
+CREATE PROCEDURE rating_assoluto (IN _idfilm INT, OUT _rating DOUBLE)
 	BEGIN
-		DECLARE temp, mediacritica, mediautenti, fasciapremialita, sommapesi, fasciaviews, visualizzazioni, celebritaregisti, celebritaattori, fasciapremialitaregisti, fasciaviewsregisti, numregisti, sommapremiregisti, sommaviewsregisti, numattori, fasciapremialitaattori, fasciaviewsattori, sommapremiattori, sommaviewsattori INT;
+		DECLARE temp, mediacritica, mediautenti, fasciapremialita, sommapesi, fasciaviews, visualizzazioni, celebritaregisti, celebritaattori, fasciapremialitaregisti, fasciaviewsregisti, numregisti, sommapremiregisti, sommaviewsregisti, numattori, fasciapremialitaattori, fasciaviewsattori, sommapremiattori, sommaviewsattori DOUBLE;
         SET mediacritica = (SELECT AVG(R.Voto) FROM Recensionecritico R WHERE R.Film = _idfilm);
         SET mediautenti = (SELECT AVG(R.Voto) FROM Recensioneutente R WHERE R.Film = _idfilm);
         SET sommapesi = (SELECT sum(P.Peso) FROM Premio P WHERE P.Id IN (SELECT P1.Premio FROM PremiazioneFilm P1 WHERE P1.Film = _idfilm));
@@ -125,9 +125,9 @@ DROP PROCEDURE IF EXISTS rating_relativo;
 
 DELIMITER $$
 
-CREATE PROCEDURE rating_relativo (IN _idfilm INT, _idutente INT, OUT _rating INT)
+CREATE PROCEDURE rating_relativo (IN _idfilm INT, _idutente INT, OUT _rating DOUBLE)
 	BEGIN
-		DECLARE f_autore, f_storia, f_critica, f_amati, f_popolari, f_premiati, f_star, storia, temp, mediacritica, mediautenti, fasciapremialita, sommapesi, fasciaviews, visualizzazioni, celebritaregisti, celebritaattori, fasciapremialitaregisti, fasciaviewsregisti, numregisti, sommapremiregisti, sommaviewsregisti, numattori, fasciapremialitaattori, fasciaviewsattori, sommapremiattori, sommaviewsattori INT DEFAULT 0;
+		DECLARE f_autore, f_storia, f_critica, f_amati, f_popolari, f_premiati, f_star, storia, temp, mediacritica, mediautenti, fasciapremialita, sommapesi, fasciaviews, visualizzazioni, celebritaregisti, celebritaattori, fasciapremialitaregisti, fasciaviewsregisti, numregisti, sommapremiregisti, sommaviewsregisti, numattori, fasciapremialitaattori, fasciaviewsattori, sommapremiattori, sommaviewsattori DOUBLE DEFAULT 0;
 	    SET f_autore = (SELECT I.Valore FROM Importanza I WHERE I.Utente = _idutente AND I.Fattore = 'Film d’autore');
 	    IF f_autore IS NULL THEN
 			SET f_autore = 0;
