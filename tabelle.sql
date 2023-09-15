@@ -180,7 +180,7 @@ CREATE TABLE IF NOT EXISTS PLZ.`Film` (
     `TotaleCritica` INT NOT NULL DEFAULT 0,
     `SommaUtenti` BIGINT NOT NULL DEFAULT 0,
     `TotaleUtenti` BIGINT NOT NULL DEFAULT 0,
-    `RatingAssoluto` BIGINT DEFAULT NULL,
+    `RatingAssoluto` DOUBLE DEFAULT NULL,
 `Visualizzazioni` BIGINT NOT NULL DEFAULT 0,
   PRIMARY KEY (`Id`))
 ENGINE = InnoDB DEFAULT CHARSET=latin1;
