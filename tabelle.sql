@@ -156,7 +156,7 @@ ENGINE = InnoDB DEFAULT CHARSET=latin1;
 -- -----------------------------------------------------
 
 CREATE TABLE IF NOT EXISTS PLZ.`Fattura` (
-  `Id` INT NOT NULL,
+  `Id` INT NOT NULL AUTO_INCREMENT,
   `Saldo` DATETIME,
   `Emissione` DATETIME NOT NULL,
   `Utente` INT NOT NULL,
@@ -437,7 +437,7 @@ ENGINE = InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE IF NOT EXISTS PLZ.`Utente` (
 
-  `Codice` INT NOT NULL,
+  `Codice` INT NOT NULL AUTO_INCREMENT,
   `Nome` VARCHAR(255) NOT NULL,
     `Cognome` VARCHAR(255) NOT NULL,
     `Email` VARCHAR(255) NOT NULL,
