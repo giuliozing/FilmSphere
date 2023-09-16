@@ -634,7 +634,7 @@ begin
     order by p.Chi desc
     limit 1;
     drop temporary table provvisoria_server;
-    insert into erogazione values (current_timestamp, null, _contenuto, serverfinale, _inizio, _dispositivo);
+    insert into erogazione(`Inizio`, `Fine`, `Contenuto`, `Server`, `InizioConnessione`, `Dispositivo`) values (current_timestamp, null, _contenuto, serverfinale, _inizio, _dispositivo);
 end $$
 delimiter ;
 
