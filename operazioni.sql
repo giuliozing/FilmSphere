@@ -41,15 +41,15 @@ CREATE PROCEDURE rating_assoluto (IN _idfilm INT, OUT _rating DOUBLE)
 			SET fasciapremialitaregisti = 5;
 		END IF;
         SET temp = sommaviewsregisti/numregisti;
-        IF temp < 30000 THEN
+        IF temp < 30 THEN
 			SET fasciaviewsregisti = 0;
-		ELSEIF temp >= 30000 AND temp < 45000 THEN
+		ELSEIF temp >= 30 AND temp < 45 THEN
 			SET fasciaviewsregisti = 1;
-		ELSEIF temp >= 45000 AND temp < 60000 THEN
+		ELSEIF temp >= 45 AND temp < 60 THEN
 			SET fasciaviewsregisti = 2;
-		ELSEIF temp >= 60000 AND temp < 75000 THEN
+		ELSEIF temp >= 60 AND temp < 75 THEN
 			SET fasciaviewsregisti = 3;
-		ELSEIF temp >= 75000 AND temp < 90000 THEN
+		ELSEIF temp >= 75 AND temp < 90 THEN
 			SET fasciaviewsregisti = 4;
 		ELSE
 			SET fasciaviewsregisti = 5;
@@ -71,15 +71,15 @@ CREATE PROCEDURE rating_assoluto (IN _idfilm INT, OUT _rating DOUBLE)
 			SET fasciapremialitaattori = 5;
 		END IF;
         SET temp = sommaviewsattori/numattori;
-        IF temp < 40000 THEN
+        IF temp < 40 THEN
 			SET fasciaviewsattori = 0;
-		ELSEIF temp >= 40000 AND temp < 60000 THEN
+		ELSEIF temp >= 40 AND temp < 60 THEN
 			SET fasciaviewsattori = 1;
-		ELSEIF temp >= 60000 AND temp < 80000 THEN
+		ELSEIF temp >= 60 AND temp < 80 THEN
 			SET fasciaviewsattori = 2;
-		ELSEIF temp >= 80000 AND temp < 100000 THEN
+		ELSEIF temp >= 80 AND temp < 100 THEN
 			SET fasciaviewsattori = 3;
-		ELSEIF temp >= 100000 AND temp < 120000 THEN
+		ELSEIF temp >= 100 AND temp < 120 THEN
 			SET fasciaviewsattori = 4;
 		ELSE
 			SET fasciaviewsattori = 5;
@@ -100,15 +100,15 @@ CREATE PROCEDURE rating_assoluto (IN _idfilm INT, OUT _rating DOUBLE)
 			SET fasciapremialita = 5;
 		END IF;
         
-        IF visualizzazioni < 20000 THEN
+        IF visualizzazioni < 20 THEN
 			SET fasciaviews = 0;
-		ELSEIF visualizzazioni >= 20000 AND visualizzazioni < 30000 THEN
+		ELSEIF visualizzazioni >= 20 AND visualizzazioni < 30 THEN
 			SET fasciaviews = 1;
-		ELSEIF visualizzazioni >= 30000 AND visualizzazioni < 40000 THEN
+		ELSEIF visualizzazioni >= 30 AND visualizzazioni < 40 THEN
 			SET fasciaviews = 2;
-		ELSEIF visualizzazioni >= 40000 AND visualizzazioni < 50000 THEN
+		ELSEIF visualizzazioni >= 40 AND visualizzazioni < 50 THEN
 			SET fasciaviews = 3;
-		ELSEIF visualizzazioni >= 50000 AND visualizzazioni < 60000 THEN
+		ELSEIF visualizzazioni >= 50 AND visualizzazioni < 60 THEN
 			SET fasciaviews = 4;
 		ELSE
 			SET fasciaviews = 5;
@@ -160,45 +160,45 @@ CREATE PROCEDURE rating_relativo (IN _idfilm INT, _idutente INT, OUT _rating DOU
                 SET fasciapremialitaregisti = 100;
             END IF;
 	        SET temp = sommaviewsregisti/numregisti;
-	        IF temp < 30000 THEN
+	        IF temp < 30.000 THEN
 			    SET fasciaviewsregisti = 0;
-		    ELSEIF temp >= 30000 AND temp < 33750 THEN
+		    ELSEIF temp >= 30.000 AND temp < 33.750 THEN
 			    SET fasciaviewsregisti = 5;
-		    ELSEIF temp >= 33750 AND temp < 37500 THEN
+		    ELSEIF temp >= 33.750 AND temp < 37.500 THEN
 			    SET fasciaviewsregisti = 10;
-		    ELSEIF temp >= 37500 AND temp < 41250 THEN
+		    ELSEIF temp >= 37.500 AND temp < 41.250 THEN
 			    SET fasciaviewsregisti = 15;
-		    ELSEIF temp >= 41250 AND temp < 45000 THEN
+		    ELSEIF temp >= 41.250 AND temp < 45.000 THEN
 			    SET fasciaviewsregisti = 20;
-		    ELSEIF temp >= 45000 AND temp < 48750 THEN
+		    ELSEIF temp >= 45.000 AND temp < 48.750 THEN
 			    SET fasciaviewsregisti = 25;
-		    ELSEIF temp >= 48750 AND temp < 52500 THEN
+		    ELSEIF temp >= 48.750 AND temp < 52.500 THEN
 			    SET fasciaviewsregisti = 30;
-		    ELSEIF temp >= 52500 AND temp < 56250 THEN
+		    ELSEIF temp >= 52.500 AND temp < 56.250 THEN
 			    SET fasciaviewsregisti = 35;
-		    ELSEIF temp >= 56250 AND temp < 60000 THEN
+		    ELSEIF temp >= 56.250 AND temp < 60.000 THEN
 			    SET fasciaviewsregisti = 40;
-		    ELSEIF temp >= 60000 AND temp < 63750 THEN
+		    ELSEIF temp >= 60.000 AND temp < 63.750 THEN
 			    SET fasciaviewsregisti = 45;
-		    ELSEIF temp >= 63750 AND temp < 67500 THEN
+		    ELSEIF temp >= 63.750 AND temp < 67.500 THEN
 			    SET fasciaviewsregisti = 50;
-		    ELSEIF temp >= 67500 AND temp < 71250 THEN
+		    ELSEIF temp >= 67.500 AND temp < 71.250 THEN
 			    SET fasciaviewsregisti = 55;
-		    ELSEIF temp >= 71250 AND temp < 75000 THEN
+		    ELSEIF temp >= 71.250 AND temp < 75.000 THEN
 			    SET fasciaviewsregisti = 60;
-		    ELSEIF temp >= 75000 AND temp < 78750 THEN
+		    ELSEIF temp >= 75.000 AND temp < 78.750 THEN
 			    SET fasciaviewsregisti = 65;
-		    ELSEIF temp >= 78750 AND temp < 82500 THEN
+		    ELSEIF temp >= 78.750 AND temp < 82.500 THEN
 			    SET fasciaviewsregisti = 70;
-		    ELSEIF temp >= 82500 AND temp < 86250 THEN
+		    ELSEIF temp >= 82.500 AND temp < 86.250 THEN
 			    SET fasciaviewsregisti = 75;
-		    ELSEIF temp >= 86250 AND temp < 90000 THEN
+		    ELSEIF temp >= 86.250 AND temp < 90.000 THEN
 			    SET fasciaviewsregisti = 80;
-		    ELSEIF temp >= 90000 AND temp < 93750 THEN
+		    ELSEIF temp >= 90.000 AND temp < 93.750 THEN
 			    SET fasciaviewsregisti = 85;
-		    ELSEIF temp >= 93750 AND temp < 97500 THEN
+		    ELSEIF temp >= 93.750 AND temp < 97.500 THEN
 			    SET fasciaviewsregisti = 90;
-		    ELSEIF temp >= 97500 AND temp < 105000 THEN
+		    ELSEIF temp >= 97.500 AND temp < 105.000 THEN
 			    SET fasciaviewsregisti = 95;
 		    ELSE
 			    SET fasciaviewsregisti = 100;
@@ -231,45 +231,45 @@ CREATE PROCEDURE rating_relativo (IN _idfilm INT, _idutente INT, OUT _rating DOU
 			SET f_popolari = 0;
 		ELSE
             SET visualizzazioni = (SELECT F.Visualizzazioni FROM Film F WHERE F.Id = _idfilm);
-            IF visualizzazioni < 20000 THEN
+            IF visualizzazioni < 20.000 THEN
                 SET fasciaviews = 0;
-            ELSEIF visualizzazioni >= 20000 AND visualizzazioni < 22500 THEN
+            ELSEIF visualizzazioni >= 20.000 AND visualizzazioni < 22.500 THEN
                 SET fasciaviews = 5;
-            ELSEIF visualizzazioni >= 22500 AND visualizzazioni < 25000 THEN
+            ELSEIF visualizzazioni >= 22.500 AND visualizzazioni < 25.000 THEN
                 SET fasciaviews = 10;
-            ELSEIF visualizzazioni >= 25000 AND visualizzazioni < 27500 THEN
+            ELSEIF visualizzazioni >= 25.000 AND visualizzazioni < 27.500 THEN
                 SET fasciaviews = 15;
-            ELSEIF visualizzazioni >= 27500 AND visualizzazioni < 30000 THEN
+            ELSEIF visualizzazioni >= 27.500 AND visualizzazioni < 30.000 THEN
                 SET fasciaviews = 20;
-            ELSEIF visualizzazioni >= 30000 AND visualizzazioni < 32500 THEN
+            ELSEIF visualizzazioni >= 30.000 AND visualizzazioni < 32.500 THEN
                 SET fasciaviews = 25;
-            ELSEIF visualizzazioni >= 32500 AND visualizzazioni < 35000 THEN
+            ELSEIF visualizzazioni >= 32.500 AND visualizzazioni < 35.000 THEN
                 SET fasciaviews = 30;
-            ELSEIF visualizzazioni >= 35000 AND visualizzazioni < 37500 THEN
+            ELSEIF visualizzazioni >= 35.000 AND visualizzazioni < 37.500 THEN
                 SET fasciaviews = 35;
-            ELSEIF visualizzazioni >= 37500 AND visualizzazioni < 40000 THEN
+            ELSEIF visualizzazioni >= 37.500 AND visualizzazioni < 40.000 THEN
                 SET fasciaviews = 40;
-            ELSEIF visualizzazioni >= 40000 AND visualizzazioni < 42500 THEN
+            ELSEIF visualizzazioni >= 40.000 AND visualizzazioni < 42.500 THEN
                 SET fasciaviews = 45;
-            ELSEIF visualizzazioni >= 42500 AND visualizzazioni < 45000 THEN
+            ELSEIF visualizzazioni >= 42.500 AND visualizzazioni < 45.000 THEN
                 SET fasciaviews = 50;
-            ELSEIF visualizzazioni >= 45000 AND visualizzazioni < 47500 THEN
+            ELSEIF visualizzazioni >= 45.000 AND visualizzazioni < 47.500 THEN
                 SET fasciaviews = 55;
-            ELSEIF visualizzazioni >= 47500 AND visualizzazioni < 50000 THEN
+            ELSEIF visualizzazioni >= 47.500 AND visualizzazioni < 50.000 THEN
                 SET fasciaviews = 60;
-            ELSEIF visualizzazioni >= 50000 AND visualizzazioni < 52500 THEN
+            ELSEIF visualizzazioni >= 50.000 AND visualizzazioni < 52.500 THEN
                 SET fasciaviews = 65;
-            ELSEIF visualizzazioni >= 52500 AND visualizzazioni < 55000 THEN
+            ELSEIF visualizzazioni >= 52.500 AND visualizzazioni < 55.000 THEN
                 SET fasciaviews = 70;
-            ELSEIF visualizzazioni >= 55000 AND visualizzazioni < 57500 THEN
+            ELSEIF visualizzazioni >= 55.000 AND visualizzazioni < 57.500 THEN
                 SET fasciaviews = 75;
-            ELSEIF visualizzazioni >= 57500 AND visualizzazioni < 60000 THEN
+            ELSEIF visualizzazioni >= 57.500 AND visualizzazioni < 60.000 THEN
                 SET fasciaviews = 80;
-            ELSEIF visualizzazioni >= 60000 AND visualizzazioni < 62500 THEN
+            ELSEIF visualizzazioni >= 60.000 AND visualizzazioni < 62.500 THEN
                 SET fasciaviews = 85;
-            ELSEIF visualizzazioni >= 62500 AND visualizzazioni < 65000 THEN
+            ELSEIF visualizzazioni >= 62.500 AND visualizzazioni < 65.000 THEN
                 SET fasciaviews = 90;
-            ELSEIF visualizzazioni >= 65000 AND visualizzazioni < 70000 THEN
+            ELSEIF visualizzazioni >= 65.000 AND visualizzazioni < 70.000 THEN
                 SET fasciaviews = 95;
             ELSE
                 SET fasciaviews = 100;
@@ -307,45 +307,45 @@ CREATE PROCEDURE rating_relativo (IN _idfilm INT, _idutente INT, OUT _rating DOU
                 SET fasciapremialitaattori = 100;
             END IF;
             SET temp = sommaviewsattori/numattori;
-            IF temp < 40000 THEN
+            IF temp < 40.000 THEN
                 SET fasciaviewsattori = 0;
-            ELSEIF temp >= 40000 AND temp < 45000 THEN
+            ELSEIF temp >= 40.000 AND temp < 45.000 THEN
                 SET fasciaviewsattori = 5;
-            ELSEIF temp >= 45000 AND temp < 50000 THEN
+            ELSEIF temp >= 45.000 AND temp < 50.000 THEN
                 SET fasciaviewsattori = 10;
-            ELSEIF temp >= 50000 AND temp < 55000 THEN
+            ELSEIF temp >= 50.000 AND temp < 55.000 THEN
                 SET fasciaviewsattori = 15;
-            ELSEIF temp >= 55000 AND temp < 60000 THEN
+            ELSEIF temp >= 55.000 AND temp < 60.000 THEN
                 SET fasciaviewsattori = 20;
-            ELSEIF temp >= 60000 AND temp < 65000 THEN
+            ELSEIF temp >= 60.000 AND temp < 65.000 THEN
                 SET fasciaviewsattori = 25;
-            ELSEIF temp >= 65000 AND temp < 70000 THEN
+            ELSEIF temp >= 65.000 AND temp < 70.000 THEN
                 SET fasciaviewsattori = 30;
-            ELSEIF temp >= 70000 AND temp < 75000 THEN
+            ELSEIF temp >= 70.000 AND temp < 75.000 THEN
                 SET fasciaviewsattori = 35;
-            ELSEIF temp >= 75000 AND temp < 80000 THEN
+            ELSEIF temp >= 75.000 AND temp < 80.000 THEN
                 SET fasciaviewsattori = 40;
-            ELSEIF temp >= 80000 AND temp < 85000 THEN
+            ELSEIF temp >= 80.000 AND temp < 85.000 THEN
                 SET fasciaviewsattori = 45;
-            ELSEIF temp >= 85000 AND temp < 90000 THEN
+            ELSEIF temp >= 85.000 AND temp < 90.000 THEN
                 SET fasciaviewsattori = 50;
-            ELSEIF temp >= 90000 AND temp < 95000 THEN
+            ELSEIF temp >= 90.000 AND temp < 95.000 THEN
                 SET fasciaviewsattori = 55;
-            ELSEIF temp >= 95000 AND temp < 100000 THEN
+            ELSEIF temp >= 95.000 AND temp < 100.000 THEN
                 SET fasciaviewsattori = 60;
-            ELSEIF temp >= 100000 AND temp < 105000 THEN
+            ELSEIF temp >= 100.000 AND temp < 105.000 THEN
                 SET fasciaviewsattori = 65;
-            ELSEIF temp >= 105000 AND temp < 110000 THEN
+            ELSEIF temp >= 105.000 AND temp < 110.000 THEN
                 SET fasciaviewsattori = 70;
-            ELSEIF temp >= 110000 AND temp < 115000 THEN
+            ELSEIF temp >= 110.000 AND temp < 115.000 THEN
                 SET fasciaviewsattori = 75;
-            ELSEIF temp >= 115000 AND temp < 120000 THEN
+            ELSEIF temp >= 115.000 AND temp < 120.000 THEN
                 SET fasciaviewsattori = 80;
-            ELSEIF temp >= 120000 AND temp < 125000 THEN
+            ELSEIF temp >= 120.000 AND temp < 125.000 THEN
                 SET fasciaviewsattori = 85;
-            ELSEIF temp >= 125000 AND temp < 130000 THEN
+            ELSEIF temp >= 125.000 AND temp < 130.000 THEN
                 SET fasciaviewsattori = 90;
-            ELSEIF temp >= 130000 AND temp < 140000 THEN
+            ELSEIF temp >= 130.000 AND temp < 140.000 THEN
                 SET fasciaviewsattori = 95;
             ELSE
                 SET fasciaviewsattori = 100;
@@ -642,7 +642,7 @@ delimiter ;
 -- Operazione 5: Caching
 -- -----------------------------------------------------
 
-
+-- In fase di implementazione abbiamo scelto di cosiderare gli ultimi 365 giorni per evidenziare il funzionamento
 DROP PROCEDURE IF EXISTS caching;
 
 DELIMITER $$
@@ -749,7 +749,7 @@ CREATE PROCEDURE caching (IN _id INT, _n INT)
 			movie_index AS (
 				SELECT C.Id, (SELECT COUNT(*)
 							  FROM Connessione C1 INNER JOIN Erogazione E ON (C1.Inizio = E.InizioConnessione AND C1.Dispositivo = E.Dispositivo) INNER JOIN Utente U ON C1.Utente = U.Codice
-							  WHERE E.Inizio > (DATE_SUB(CURRENT_DATE(), INTERVAL 14 DAY)) AND E.Contenuto IN (SELECT C2.Id
+							  WHERE E.Inizio > (DATE_SUB(CURRENT_DATE(), INTERVAL 365 DAY)) AND E.Contenuto IN (SELECT C2.Id
 																									 FROM Contenuto C2
 																									 WHERE C2.Film = (SELECT C3.Film
 																													  FROM Contenuto C3
@@ -758,7 +758,7 @@ CREATE PROCEDURE caching (IN _id INT, _n INT)
 																									 ) AND YEAR(CURRENT_DATE) - YEAR(U.DataNascita) >= lower_bound AND YEAR(CURRENT_DATE) - YEAR(U.DataNascita) <= upper_bound
 							  ) AS Generazione, (SELECT COUNT(*)
 							  FROM Connessione C1 INNER JOIN Erogazione E ON (C1.Inizio = E.InizioConnessione AND C1.Dispositivo = E.Dispositivo) INNER JOIN Utente U ON C1.Utente = U.Codice
-							  WHERE E.Inizio > (DATE_SUB(CURRENT_DATE(), INTERVAL 14 DAY)) AND E.Contenuto IN (SELECT C2.Id
+							  WHERE E.Inizio > (DATE_SUB(CURRENT_DATE(), INTERVAL 365 DAY)) AND E.Contenuto IN (SELECT C2.Id
 																									 FROM Contenuto C2
 																									 WHERE C2.Film = (SELECT C3.Film
 																													  FROM Contenuto C3
@@ -767,7 +767,7 @@ CREATE PROCEDURE caching (IN _id INT, _n INT)
 																									 ) AND U.Nazionalita = nazionalitautente
 							  ) AS Paese, (SELECT COUNT(*)
 							  FROM Connessione C1 INNER JOIN Erogazione E ON (C1.Inizio = E.InizioConnessione AND C1.Dispositivo = E.Dispositivo) INNER JOIN Utente U ON C1.Utente = U.Codice
-							  WHERE E.Inizio > (DATE_SUB(CURRENT_DATE(), INTERVAL 14 DAY)) AND E.Contenuto IN (SELECT C2.Id
+							  WHERE E.Inizio > (DATE_SUB(CURRENT_DATE(), INTERVAL 365 DAY)) AND E.Contenuto IN (SELECT C2.Id
 																									 FROM Contenuto C2
 																									 WHERE C2.Film = (SELECT C3.Film
 																													  FROM Contenuto C3
@@ -778,7 +778,7 @@ CREATE PROCEDURE caching (IN _id INT, _n INT)
 																														)
 							  ) AS Preferenze, (SELECT COUNT(*)
 							  FROM Connessione C1 INNER JOIN Erogazione E ON (C1.Inizio = E.InizioConnessione AND C1.Dispositivo = E.Dispositivo) INNER JOIN Utente U ON C1.Utente = U.Codice
-							  WHERE E.Inizio > (DATE_SUB(CURRENT_DATE(), INTERVAL 14 DAY)) AND E.Contenuto IN (SELECT C2.Id
+							  WHERE E.Inizio > (DATE_SUB(CURRENT_DATE(), INTERVAL 365 DAY)) AND E.Contenuto IN (SELECT C2.Id
 																									 FROM Contenuto C2
 																									 WHERE C2.Film = (SELECT C3.Film
 																													  FROM Contenuto C3
@@ -792,7 +792,7 @@ CREATE PROCEDURE caching (IN _id INT, _n INT)
 				SELECT C.Id, (
 							  SELECT COUNT(*)
 							  FROM Connessione C1 INNER JOIN Erogazione E ON (C1.Inizio = E.InizioConnessione AND C1.Dispositivo = E.Dispositivo) INNER JOIN contenutitargetaudio A ON A.Id = E.Contenuto
-							  WHERE C1.Utente = _id AND E.Inizio > (DATE_SUB(CURRENT_DATE(), INTERVAL 14 DAY)) AND E.Contenuto IN (
+							  WHERE C1.Utente = _id AND E.Inizio > (DATE_SUB(CURRENT_DATE(), INTERVAL 365 DAY)) AND E.Contenuto IN (
 																																   SELECT C2.Id
 																																   FROM contenutitargetaudio C2 INNER JOIN Contenuto C4 ON C2.Id = C4.Id INNER JOIN FormatoAudio F ON C4.CodificaAudio = F.Codice
 																																   WHERE F.Famiglia = (SELECT F1.Famiglia
@@ -803,14 +803,14 @@ CREATE PROCEDURE caching (IN _id INT, _n INT)
 							 ) AS StessaFamiglia,
 							  (SELECT COUNT(*)
 							  FROM Connessione C1 INNER JOIN Erogazione E ON (C1.Inizio = E.InizioConnessione AND C1.Dispositivo = E.Dispositivo) INNER JOIN contenutitargetaudio A ON A.Id = E.Contenuto
-							  WHERE C1.Utente = _id AND E.Inizio > (DATE_SUB(CURRENT_DATE(), INTERVAL 14 DAY)) 
+							  WHERE C1.Utente = _id AND E.Inizio > (DATE_SUB(CURRENT_DATE(), INTERVAL 365 DAY)) 
 							 ) AS Totale
 				FROM contenutitargetaudio C
 			),
 			codec_index_video AS (
 				SELECT C.Id, (SELECT COUNT(*)
 							  FROM Connessione C1 INNER JOIN Erogazione E ON (C1.Inizio = E.InizioConnessione AND C1.Dispositivo = E.Dispositivo) INNER JOIN contenutitargetvideo V ON V.Id = E.Contenuto
-							  WHERE C1.Utente = _id AND E.Inizio > (DATE_SUB(CURRENT_DATE(), INTERVAL 14 DAY)) AND E.Contenuto IN (
+							  WHERE C1.Utente = _id AND E.Inizio > (DATE_SUB(CURRENT_DATE(), INTERVAL 365 DAY)) AND E.Contenuto IN (
 																																   SELECT C2.Id
 																																   FROM contenutitargetvideo C2 INNER JOIN Contenuto C3 ON C2.Id = C3.Id INNER JOIN CodificaVideo C4 ON C2.Id = C4.Contenuto INNER JOIN FormatoVideo F ON C4.FormatoVideo = F.Codice
 																																   WHERE F.Famiglia = (
@@ -822,7 +822,7 @@ CREATE PROCEDURE caching (IN _id INT, _n INT)
 							  ) AS StessaFamiglia, 
 							  (SELECT COUNT(*)
 							  FROM Connessione C1 INNER JOIN Erogazione E ON (C1.Inizio = E.InizioConnessione AND C1.Dispositivo = E.Dispositivo) INNER JOIN contenutitargetvideo V ON V.Id = E.Contenuto
-							  WHERE C1.Utente = _id AND E.Inizio > (DATE_SUB(CURRENT_DATE(), INTERVAL 14 DAY))
+							  WHERE C1.Utente = _id AND E.Inizio > (DATE_SUB(CURRENT_DATE(), INTERVAL 365 DAY))
 							  ) AS Totale
 				FROM contenutitargetvideo C
 			),
@@ -831,11 +831,11 @@ CREATE PROCEDURE caching (IN _id INT, _n INT)
 			UNION
 			SELECT * FROM codec_index_video
 			),
-			language_index AS (
+			language_index_audio AS (
 			SELECT C.Id, (
 						  SELECT COUNT(*)
 						  FROM Connessione C1 INNER JOIN Erogazione E ON (C1.Inizio = E.InizioConnessione AND C1.Dispositivo = E.Dispositivo) INNER JOIN contenutitargetaudio A ON A.Id = E.Contenuto
-						  WHERE C1.Utente = _id AND E.Inizio > (DATE_SUB(CURRENT_DATE(), INTERVAL 14 DAY)) AND E.Contenuto IN (
+						  WHERE C1.Utente = _id AND E.Inizio > (DATE_SUB(CURRENT_DATE(), INTERVAL 365 DAY)) AND E.Contenuto IN (
 																															   SELECT C2.Id
 																															   FROM contenutitargetaudio C2 INNER JOIN Contenuto C3 ON C2.Id = C3.Id
 																															   WHERE C3.LinguaAudio = (SELECT C5.LinguaAudio
@@ -846,10 +846,15 @@ CREATE PROCEDURE caching (IN _id INT, _n INT)
 						 ) AS StessaLingua,
 						  (SELECT COUNT(*)
 						  FROM Connessione C1 INNER JOIN Erogazione E ON (C1.Inizio = E.InizioConnessione AND C1.Dispositivo = E.Dispositivo) INNER JOIN contenutitargetaudio A ON A.Id = E.Contenuto
-						  WHERE C1.Utente = _id AND E.Inizio > (DATE_SUB(CURRENT_DATE(), INTERVAL 14 DAY)) 
+						  WHERE C1.Utente = _id AND E.Inizio > (DATE_SUB(CURRENT_DATE(), INTERVAL 365 DAY)) 
 						 ) AS Totale
 			FROM contenutitargetaudio C
 			),
+            language_index AS (
+				SELECT * FROM language_index_audio
+                UNION
+                SELECT C.Id, 1 as StessaLingua, 1 as Totale FROM contenutitargetvideo C
+            ),
 			vis_di_gamma AS (
 				SELECT C.Id, (
 							SELECT COUNT(*)
@@ -871,7 +876,6 @@ CREATE PROCEDURE caching (IN _id INT, _n INT)
 			FROM pi_greco P
 			order by P.Pi desc
 		limit _n;
-
     END $$
 DELIMITER ;
 
