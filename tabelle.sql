@@ -140,7 +140,7 @@ ENGINE = InnoDB DEFAULT CHARSET=latin1;
 -- -----------------------------------------------------
 
 CREATE TABLE IF NOT EXISTS PLZ.`Erogazione` (
-  `Id` INT NOT NULL,
+  `Id` INT NOT NULL AUTO_INCREMENT,
   `Inizio` DATETIME NOT NULL,
   `Fine` DATETIME,
   `Contenuto` INT NOT NULL,
