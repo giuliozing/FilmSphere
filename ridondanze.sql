@@ -37,7 +37,7 @@ begin
     end loop;
     close c;
 end $$
-
+delimiter ;
 call inizializza_banda_disponibile();
 
 -- -----------------------------------------------------
@@ -111,7 +111,8 @@ delimiter $$
 create procedure aggiorna_rating_assoluto_procedura()
 begin
     declare finito tinyint(1) default 0;
-    declare film_in_aggiornamento, RA int;
+    declare film_in_aggiornamento int;
+    declare RA DOUBLE;
      declare c cursor for select Id from film;
     declare continue handler for not found set finito = 1;
     open c;
@@ -134,12 +135,16 @@ call aggiorna_rating_assoluto_procedura();
 -- Aggiornamento della ridondanza "Rating Assoluto"
 -- -----------------------------------------------------
 
-drop event if exists aggiorna_rating_assoluto;
+drop event if exists aggiorna_rating_assoluto_evento;
+
+DELIMITER $$
+
 create event aggiorna_rating_assoluto_evento
 on schedule every 1 day starts '2023-09-30-00:00:00' do
 begin
     call aggiorna_rating_assoluto_procedura();
-end;
+end $$
+delimiter ;
 
 -- -----------------------------------------------------
 -- Aggiornamento della ridondanza "BandaDisponibile"
@@ -211,8 +216,10 @@ call aggiorna_visualizzazioni();
 -- -----------------------------------------------------
 
 drop event if exists evento_visualizzazioni;
+delimiter $$
 create event evento_visualizzazioni
 on schedule every 1 day starts '2023-09-30-00:00:00' do
 begin
     call aggiorna_visualizzazioni();
-end;
+end $$
+delimiter ;
