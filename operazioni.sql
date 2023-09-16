@@ -585,7 +585,6 @@ begin
     declare bandadisponibile bigint default 0;
     declare s, jitter int default 0;
     declare serverfinale int default 0;
-    declare maxId int default 0;
     declare latitudine_p, longitudine_p, latitudine_s, longitudine_s,chi double default 0;
     declare finito tinyint(1) default 0;
     declare _IP bigint default 0;
@@ -635,8 +634,7 @@ begin
     order by p.Chi desc
     limit 1;
     drop temporary table provvisoria_server;
-    select max(Id) from erogazione into maxId;
-    insert into erogazione values (maxId+1, current_timestamp, null, _contenuto, serverfinale, _inizio, _dispositivo);
+    insert into erogazione values (current_timestamp, null, _contenuto, serverfinale, _inizio, _dispositivo);
 end $$
 delimiter ;
 
