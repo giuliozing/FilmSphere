@@ -971,6 +971,9 @@ DELIMITER ;
 -- -----------------------------------------------------
 
 drop event if exists rinnova_abbonamento;
+
+DELIMITER $$
+
 create event rinnova_abbonamento
 on schedule every 1 day starts '2023-09-30 03:00:00' do
 begin
@@ -997,7 +1000,37 @@ begin
         end if;
     end loop;
     close c;
-end;
+end $$
+DELIMITER ;
+-- -----------------------------------------------------
+-- Operazione 8: Inserimento di una recensione
+-- -----------------------------------------------------
+
+drop procedure if exists inserisci_recensione;
+delimiter $$
+create procedure inserisci_recensione(in _voto int, in _testo varchar(3000), in _film int, in _recensore int, in _critico tinyint(1), out check_ tinyint(1))
+begin
+    -- verifichiamo che l'utente, o il critico, non abbia già recensito il film
+    -- il booleano 'critico' discrimina se il recensore e' un critico o meno
+    declare recensioniprecedenti int default 0;
+    if _critico=1
+        then select count(*) into recensioniprecedenti from recensionecritico
+            where Critico = _recensore
+            and Film = _film;
+    else select count(*) into recensioniprecedenti from recensioneutente
+            where Utente = _recensore
+            and Film = _film;
+    end if;
+    if recensioniprecedenti > 0 then set check_ = false;
+    else
+        set check_ = true;
+        if _critico=1 then
+            insert into recensionecritico values(_recensore, _film, current_date, _testo, _voto);
+        else insert into recensioneutente values (_recensore, _film, current_date, _testo, _voto);
+        end if;
+    end if;
+end $$
+delimiter ;
 -- -----------------------------------------------------
 -- Operazione 8: Inserimento di una recensione
 -- -----------------------------------------------------
