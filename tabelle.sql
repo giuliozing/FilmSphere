@@ -449,7 +449,3 @@ CREATE TABLE IF NOT EXISTS PLZ.`Utente` (
     `Inizio` DATE,
   PRIMARY KEY (`Codice`))
 ENGINE = InnoDB DEFAULT CHARSET=latin1;
-
-
-
-
