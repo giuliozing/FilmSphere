@@ -889,16 +889,15 @@ DROP PROCEDURE IF EXISTS registrazione_utente;
 DELIMITER $$
 CREATE PROCEDURE registrazione_utente (IN _nome VARCHAR(255), _cognome VARCHAR(255), _email VARCHAR(255), _password VARCHAR(255), _nazionalita VARCHAR(45), _datanascita DATE, OUT _check BOOL)
 	BEGIN
-		DECLARE temp1, temp2, temp3 INT;
+		DECLARE temp1, temp2 INT;
         SET temp1 = (SELECT COUNT(*) FROM utente U WHERE U.Email = _email);
         SET temp2 = (SELECT COUNT(*) FROM paese P WHERE P.Nome = _nazionalita);
-        SET temp3 = 1 + (SELECT max(U.Codice) FROM utente U);
 
         IF temp1 = 1 OR temp2 = 0 OR _datanascita > CURRENT_DATE OR _email not like '%@%.%'THEN
 			SET _check = FALSE;
 		ELSE
-			INSERT INTO Utente(Nome, Cognome, Email, Password, Nazionalita, DataNascita, Codice)
-            VALUES (_nome, _cognome, _email, _password, _nazionalita, _datanascita, temp3);
+			INSERT INTO Utente(Nome, Cognome, Email, Password, Nazionalita, DataNascita)
+            VALUES (_nome, _cognome, _email, _password, _nazionalita, _datanascita);
             SET _check = TRUE;
 		END IF;
     END $$
@@ -948,16 +947,14 @@ begin
     DECLARE carta_di_credito BIGINT;
     DECLARE mese_scadenza INT;
     DECLARE anno_scadenza INT;
-    DECLARE max_id INT;
     -- recuperiamo i dati di abbonamento e carta di credito associati all'utente
-    select Nome, CartaDiCredito from plz.utente where Codice=_utente into abbonamento, carta_di_credito;
+    select U.Abbonamento, U.CartaDiCredito from plz.utente U where U.Codice=_utente into abbonamento, carta_di_credito;
     -- verifichiamo che la carta di credito non sia scaduta
     select MeseScadenza, AnnoScadenza from cartadicredito where Numero=carta_di_credito into mese_scadenza, anno_scadenza;
     if anno_scadenza<year(current_date) or (anno_scadenza=year(current_date)and mese_scadenza<month(current_date))
         then set _check=false;
     else
-        select max(Id) from fattura into max_id;
-        insert into fattura values(max_id+1, null, current_date+interval 30 day, current_date, _utente, carta_di_credito, abbonamento);
+        insert into fattura(`Saldo`, `Emissione`, `Utente`, `CartaDiCredito`, `Abbonamento`) values(null, current_date, _utente, carta_di_credito, abbonamento);
         set _check = true;
     end if;
 end $$
@@ -1298,12 +1295,15 @@ with fruizione_trimestre_precedente_sottotitoli as(
     natural join fruizione_trimestre_precedente_sottotitoli;
 END $$
 
+DELIMITER ;
 
 -- -----------------------------------------------------
 -- Operazione 11: Classifiche
 -- -----------------------------------------------------
 drop procedure if exists classifiche;
+
 delimiter $$
+
 create procedure classifiche()
 begin
 -- distinguo i formati audio e video tramite le lettere A e V
@@ -1370,5 +1370,3 @@ CREATE PROCEDURE fine_erogazione (IN _id INT, _fine DATETIME)
 	                      WHERE E.Id = _id);
     END $$
 DELIMITER ;
-
-
