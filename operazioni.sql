@@ -917,7 +917,7 @@ DELIMITER $$
 
 CREATE PROCEDURE sottoscrizione_servizio (IN _codice INT, _abbonamento VARCHAR(45), _numero BIGINT, _cvv INT, _nome VARCHAR(255), _cognome VARCHAR(255), _mese INT, _anno INT, OUT _check BOOL)
 	BEGIN
-		DECLARE temp1, temp2, etautente, etamin INT;
+		DECLARE temp1, temp2, etautente, etamin, num_prov INT;
         DECLARE datanascita DATE;
         SET datanascita = (SELECT U.DataNascita FROM utente U WHERE U.Codice = _codice);
         SET temp1 = (SELECT COUNT(*) FROM abbonamento A WHERE A.Nome = _abbonamento);
@@ -928,10 +928,15 @@ CREATE PROCEDURE sottoscrizione_servizio (IN _codice INT, _abbonamento VARCHAR(4
 			SET _check = FALSE;
 		ELSE
 			UPDATE Utente U
-            SET U.Abbonamento = _abbonamento, U.CartaDiCredito = _numero
+            SET U.Abbonamento = _abbonamento, U.CartaDiCredito = _numero, U.Inizio = current_date()
             WHERE U.Codice = _codice;
-			INSERT INTO cartadicredito
-            VALUES (_numero, _cvv, _nome, _cognome, _mese, _anno);
+            SELECT COUNT(*) into num_prov
+            FROM CartaDiCredito C
+            WHERE C.Numero = _numero;
+            IF num_prov = 0 THEN
+				INSERT INTO cartadicredito
+				VALUES (_numero, _cvv, _nome, _cognome, _mese, _anno);
+			END IF;
             SET _check = TRUE;
 		END IF;
     END $$
@@ -1013,16 +1018,19 @@ create procedure inserisci_recensione(in _voto int, in _testo varchar(3000), in 
 begin
     -- verifichiamo che l'utente, o il critico, non abbia già recensito il film
     -- il booleano 'critico' discrimina se il recensore e' un critico o meno
-    declare recensioniprecedenti int default 0;
+    declare recensioniprecedenti, conta_film, conta_recensore int default 0;
     if _critico=1
         then select count(*) into recensioniprecedenti from recensionecritico
             where Critico = _recensore
             and Film = _film;
+            select count(*) from Critico C WHERE C.Id = _recensore into conta_recensore;
     else select count(*) into recensioniprecedenti from recensioneutente
             where Utente = _recensore
             and Film = _film;
+            select count(*) from Utente U WHERE U.Codice = _recensore into conta_recensore;
     end if;
-    if recensioniprecedenti > 0 then set check_ = false;
+    SELECT COUNT(*) FROM Film F WHERE F.Id = _film into conta_film;
+    if recensioniprecedenti > 0 OR _voto < 1 OR _voto > 5 OR conta_film = 0 OR conta_recensore = 0 then set check_ = false;
     else
         set check_ = true;
         if _critico=1 then
@@ -1165,7 +1173,7 @@ delimiter $$
         end if;
     end loop ;
     close cur;
-    call indice_sigma(1, sigma_);
+    call indice_sigma(_server_target, sigma_);
     select _server_target as Da, Server as A, Contenuto
     from provvisoria_bilanciamento
     order by Eta desc
@@ -1244,7 +1252,7 @@ begin
     and month(erogazione.Inizio) = mese and year(erogazione.Inizio) = anno
     group by utente.Codice, paese.Nome, utente.Abbonamento
    )
-    select Abbonamento, Fascia, Paese, avg(fruizione_tempo) as fruizione_tempo_media, avg(fruizione_GB) as fruizione_GB_media
+    select Abbonamento, Fascia, Paese, avg(fruizione_tempo) * 100 as fruizione_tempo_media, avg(fruizione_GB) * 100 as fruizione_GB_media
     from base
     group by Abbonamento, Fascia, Paese;
 end $$
