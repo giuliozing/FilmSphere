@@ -69,7 +69,7 @@ begin
 end $$
 delimiter ;
 
-
+CALL inizializza_ridondanze_recensioni();
 -- -----------------------------------------------------
 -- Aggiornamento delle ridondanze 'SommaUtenti', 'TotaleUtenti'
 -- -----------------------------------------------------
@@ -191,19 +191,19 @@ CREATE PROCEDURE aggiorna_visualizzazioni ()
 		REPLACE INTO Film
 	        SELECT F.Id, F.Titolo, F.Descrizione, F.Anno, F.Durata, F.Paese, F.SommaCritica, F.TotaleCritica, F.SommaUtenti, F.TotaleUtenti, F.RatingAssoluto, V.totale_views_per_film AS Visualizzazioni
 		FROM Film F INNER JOIN (
-					SELECT C.Film, SUM(V1.vpc) AS totale_views_per_film
+					SELECT V1.Film, SUM(V1.vpc) AS totale_views_per_film
 					FROM (
-					      SELECT N.Contenuto, count(*) AS vpc
+					      SELECT N.Film, N.Contenuto, count(*) AS vpc
 					      FROM (
 						    SELECT *
 						    FROM (
-							  SELECT *, LAG(E.Contenuto, 1) OVER(PARTITION BY E.InizioConnessione, E.Dispositivo ORDER BY E.Inizio) AS _prec
-							  FROM Erogazione E
+							  SELECT E.Contenuto, C.Film, LAG(C.Film, 1) OVER(PARTITION BY E.InizioConnessione, E.Dispositivo ORDER BY E.Inizio) AS _prec
+							  FROM Erogazione E INNER JOIN Contenuto C ON E.Contenuto = C.Id
 							  ) AS Q
-						    WHERE Q._prec <> Q.Contenuto
+						    WHERE Q._prec <> Q.Film
 						    ) AS N 
 					      GROUP BY N.Contenuto
-					      ) AS V1 INNER JOIN Contenuto C ON C.Id = V1.Contenuto
+					      ) AS V1 
 					GROUP BY C.Film
 					) AS V ON V.Film = F.Id;
     END $$
