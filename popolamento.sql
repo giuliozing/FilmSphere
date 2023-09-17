@@ -1,7 +1,6 @@
 -- Lorenzo Leoncini, Giulio Zingrillo. Progetto di Basi di Dati 2023
 
 -- Questo script popola il database come da sezione 9 della documentazione
-
 USE plz;
 -- -----------------------------------------------------
 -- Tabella Abbonamento
@@ -1861,7 +1860,8 @@ INSERT INTO PLZ.Contenuto VALUES (501,481531268,6720,9,'Cinese',3),
 INSERT INTO PLZ.Critico VALUES (1,'Dante','Alighieri','Il sommo poeta'),
 	(2,'Giovanni','Boccaccio',NULL),
 	(3,'Francesco','Petrarca',NULL),
-	(4,'Miguel','De Cervantes',NULL);
+	(4,'Miguel','De Cervantes',NULL),
+    (5, 'Ludovico', 'Ariosto', NULL);
 
 	
 -- -----------------------------------------------------
