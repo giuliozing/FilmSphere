@@ -2,7 +2,7 @@
 
 -- Questo script popola il database come da sezione 9 della documentazione
 
-USE.plz;
+USE plz;
 -- -----------------------------------------------------
 -- Tabella Abbonamento
 -- -----------------------------------------------------
