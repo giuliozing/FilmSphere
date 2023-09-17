@@ -186,26 +186,16 @@ DROP PROCEDURE IF EXISTS aggiorna_visualizzazioni;
 
 DELIMITER $$
 
-CREATE PROCEDURE aggiorna_visualizzazioni ()
+CREATE PROCEDURE aggiorna_visualizzazioni()
 	BEGIN
 		REPLACE INTO Film
-	        SELECT F.Id, F.Titolo, F.Descrizione, F.Anno, F.Durata, F.Paese, F.SommaCritica, F.TotaleCritica, F.SommaUtenti, F.TotaleUtenti, F.RatingAssoluto, V.totale_views_per_film AS Visualizzazioni
-		FROM Film F INNER JOIN (
-					SELECT V1.Film, SUM(V1.vpc) AS totale_views_per_film
-					FROM (
-					      SELECT N.Film, N.Contenuto, count(*) AS vpc
-					      FROM (
-						    SELECT *
-						    FROM (
-							  SELECT E.Contenuto, C.Film, LAG(C.Film, 1) OVER(PARTITION BY E.InizioConnessione, E.Dispositivo ORDER BY E.Inizio) AS _prec
-							  FROM Erogazione E INNER JOIN Contenuto C ON E.Contenuto = C.Id
-							  ) AS Q
-						    WHERE Q._prec <> Q.Film
-						    ) AS N 
-					      GROUP BY N.Contenuto
-					      ) AS V1 
-					GROUP BY C.Film
-					) AS V ON V.Film = F.Id;
+		SELECT F.Id, F.Titolo, F.Descrizione, F.Anno, F.Durata, F.Paese, F.SommaCritica, F.TotaleCritica, F.SommaUtenti, F.TotaleUtenti, F.RatingAssoluto, V.totale_views_per_film AS Visualizzazioni
+        FROM Film F INNER JOIN (SELECT E.Film, count(*) AS totale_views_per_film
+							    FROM (SELECT *
+									  FROM (SELECT C.Film, LAG(C.Film, 1) OVER(PARTITION BY E2.InizioConnessione, E2.Dispositivo ORDER BY E2.Inizio) AS _prec
+											FROM Erogazione E2 INNER JOIN Contenuto C ON E2.Contenuto = C.Id) AS E1
+									  WHERE E1.Film <> _prec) AS E
+								GROUP BY E.Film) AS V ON V.Film = F.Id;
     END $$
 DELIMITER ;
 
