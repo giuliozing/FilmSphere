@@ -500,6 +500,9 @@ begin
         open c;
         scan: loop
             fetch c into _film;
+            if finito = 1
+                then leave scan;
+            end if;
             -- coefficiente di storico genere: individuo la percentuale di visualizzazioni, da parte dell'utente, di film che appartengono al genere del film target
             select count(*)/visualizzazioni_totali into c_storico_genere
             from contenuto c inner join erogazione e on c.Id = e.Contenuto
@@ -559,9 +562,7 @@ begin
             -- calcolo la media dei coefficienti di storico del film
             set media_cs = (5*c_storico_genere+2*c_storico_attori+4*c_storico_registi+c_storico_paese)/12;
             replace into Provvisoria values(_film, media_cs);
-            if finito = 1
-                then leave scan;
-            end if;
+            
 
         end loop;
         close c;
@@ -587,14 +588,15 @@ begin
     declare s, jitter int default 0;
     declare serverfinale int default 0;
     declare latitudine_p, longitudine_p, latitudine_s, longitudine_s,chi double default 0;
-    declare finito tinyint(1) default 0;
+    declare finito integer default 0;
     declare _IP bigint default 0;
     -- individuo i server che possiedono il contenuto
     declare c cursor for
-        select Server
-        from possessoserver
-        where Contenuto=_contenuto;
-    declare continue handler for not found set finito=1;
+        select P.Server
+        from possessoserver P
+        where P.Contenuto=_contenuto;
+    declare continue handler for not found 
+		set finito=1;
     -- risalgo all'indirizzo IP
     select IP into _IP
     from connessione
@@ -614,6 +616,7 @@ begin
         `Server` int not null,
         `Chi` double not null
     );
+    set finito = 0;
     open c;
     scan: loop
         fetch c into s;
@@ -625,7 +628,8 @@ begin
         where ser.Id = s;
         set chi = bandadisponibile/(power(power((latitudine_s-latitudine_p),2)+power((longitudine_s-longitudine_p),2), 0.5))/jitter;
         insert into provvisoria_server values (s, chi);
-    end loop;
+        
+    end loop scan;
     close c;
     select p.Server
     from provvisoria_server p
@@ -898,7 +902,7 @@ CREATE PROCEDURE registrazione_utente (IN _nome VARCHAR(255), _cognome VARCHAR(2
 		DECLARE temp1 INT;
         SET temp1 = (SELECT COUNT(*) FROM utente U WHERE U.Email = _email);
 
-        IF temp1 = 1 OR _datanascita > CURRENT_DATE OR _email not like '%@%.%'THEN
+        IF temp1 = 1 OR _email not like '%@%.%'THEN
 			SET _check = FALSE;
 		ELSE
 			INSERT INTO Utente(Nome, Cognome, Email, Password, Nazionalita, DataNascita)
@@ -998,6 +1002,9 @@ begin
     open c;
     scan: loop
         fetch c into _user;
+        if _fine=1
+            then leave scan;
+        end if;
         select Abbonamento, Inizio from utente where Codice = _user into _abbonamento, _inizio;
         select Durata from abbonamento where Nome = _abbonamento;
         if _inizio + interval _durata month > current_date
@@ -1005,9 +1012,7 @@ begin
         else
             call emissione_fattura(_user, _check);
         end if;
-        if _fine=1
-            then leave scan;
-        end if;
+        
     end loop;
     close c;
 end $$
@@ -1170,12 +1175,12 @@ delimiter $$
     open cur;
     scan : loop
         fetch cur into s_d, c;
-
-        call coefficiente_eta(c, _server_target, s_d, _eta);
-        insert into provvisoria_bilanciamento values (s_d, c, _eta);
-        if finito
+		if finito
         then leave scan;
         end if;
+        call coefficiente_eta(c, _server_target, s_d, _eta);
+        insert into provvisoria_bilanciamento values (s_d, c, _eta);
+        
     end loop ;
     close cur;
     call indice_sigma(_server_target, sigma_);
