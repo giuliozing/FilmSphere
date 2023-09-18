@@ -3,10 +3,332 @@
 -- Questo script definisce i trigger che implementano i vincoli del database.
 
 
-
-USE plz;
 -- Vincoli intrarelazionali di dominio
 -- Numero Carta di Credito
+USE plz;
+DROP TRIGGER IF EXISTS int_pos_abbonamento;
+
+DELIMITER $$
+
+CREATE TRIGGER int_pos_abbonamento
+BEFORE INSERT ON Abbonamento FOR EACH ROW
+BEGIN
+  IF NEW.Tariffa < 0 OR NEW.Durata < 0 OR NEW.MaxOre < 0 OR NEW.EtaMinima < 0 THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Dati inseriti non validi';
+  END IF;
+END $$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS int_pos_artista;
+
+DELIMITER $$
+
+CREATE TRIGGER int_pos_artista
+BEFORE INSERT ON Artista FOR EACH ROW
+BEGIN
+  IF NEW.Id < 0 THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Dati inseriti non validi';
+  END IF;
+END $$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS int_pos_contenuto;
+
+DELIMITER $$
+
+CREATE TRIGGER int_pos_contenuto
+BEFORE INSERT ON Contenuto FOR EACH ROW
+BEGIN
+  IF NEW.Id < 0 OR NEW.Dimensione < 0 OR NEW.Lunghezza < 0 THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Dati inseriti non validi';
+  END IF;
+END $$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS int_pos_critico;
+
+DELIMITER $$
+
+CREATE TRIGGER int_pos_critico
+BEFORE INSERT ON Critico FOR EACH ROW
+BEGIN
+  IF NEW.Id < 0 THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Dati inseriti non validi';
+  END IF;
+END $$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS int_pos_dispositivo;
+
+DELIMITER $$
+
+CREATE TRIGGER int_pos_dispositivo
+BEFORE INSERT ON Dispositivo FOR EACH ROW
+BEGIN
+  IF NEW.Id < 0 THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Dati inseriti non validi';
+  END IF;
+END $$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS int_pos_erogazione;
+
+DELIMITER $$
+
+CREATE TRIGGER int_pos_erogazione
+BEFORE INSERT ON Erogazione FOR EACH ROW
+BEGIN
+  IF NEW.Id < 0 THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Dati inseriti non validi';
+  END IF;
+END $$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS int_pos_fattura;
+
+DELIMITER $$
+
+CREATE TRIGGER int_pos_fattura
+BEFORE INSERT ON Fattura FOR EACH ROW
+BEGIN
+  IF NEW.Id < 0 THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Dati inseriti non validi';
+  END IF;
+END $$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS int_pos_film;
+
+DELIMITER $$
+
+CREATE TRIGGER int_pos_film
+BEFORE INSERT ON Film FOR EACH ROW
+BEGIN
+  IF NEW.Id < 0 OR NEW.Durata < 0 THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Dati inseriti non validi';
+  END IF;
+END $$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS int_pos_formatoaudio;
+
+DELIMITER $$
+
+CREATE TRIGGER int_pos_formatoaudio
+BEFORE INSERT ON FormatoAudio FOR EACH ROW
+BEGIN
+  IF NEW.Codice < 0 OR NEW.Bitrate < 0 THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Dati inseriti non validi';
+  END IF;
+END $$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS int_pos_formatovideo;
+
+DELIMITER $$
+
+CREATE TRIGGER int_pos_formatovideo
+BEFORE INSERT ON FormatoVideo FOR EACH ROW
+BEGIN
+  IF NEW.Codice < 0 OR NEW.Bitrate < 0 OR NEW.Risoluzione < 0 THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Dati inseriti non validi';
+  END IF;
+END $$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS int_pos_formatovideo;
+
+DELIMITER $$
+
+CREATE TRIGGER int_pos_formatovideo
+BEFORE INSERT ON FormatoVideo FOR EACH ROW
+BEGIN
+  IF NEW.Codice < 0 OR NEW.Bitrate < 0 OR NEW.Risoluzione < 0 THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Dati inseriti non validi';
+  END IF;
+END $$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS int_pos_premio;
+
+DELIMITER $$
+
+CREATE TRIGGER int_pos_premio
+BEFORE INSERT ON Premio FOR EACH ROW
+BEGIN
+  IF NEW.Id < 0 OR NEW.Anno < 0 THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Dati inseriti non validi';
+  END IF;
+END $$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS int_pos_premio;
+
+DELIMITER $$
+
+CREATE TRIGGER int_pos_premio
+BEFORE INSERT ON Premio FOR EACH ROW
+BEGIN
+  IF NEW.Id < 0 OR NEW.Anno < 0 THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Dati inseriti non validi';
+  END IF;
+END $$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS int_pos_server;
+
+DELIMITER $$
+
+CREATE TRIGGER int_pos_server
+BEFORE INSERT ON Server FOR EACH ROW
+BEGIN
+  IF NEW.Id < 0 OR NEW.LarghezzaBanda < 0 OR NEW.CapacitaMax < 0 THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Dati inseriti non validi';
+  END IF;
+END $$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS int_pos_utente;
+
+DELIMITER $$
+
+CREATE TRIGGER int_pos_utente
+BEFORE INSERT ON Utente FOR EACH ROW
+BEGIN
+  IF NEW.Codice < 0 THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Dati inseriti non validi';
+  END IF;
+END $$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS data_post_connessione;
+
+DELIMITER $$
+
+CREATE TRIGGER data_post_connessione
+BEFORE INSERT ON Connessione FOR EACH ROW
+BEGIN
+  IF NEW.Inizio < '2022-09-15' OR NEW.Fine < '2022-09-15' THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Dati inseriti non validi';
+  END IF;
+END $$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS data_post_erogazione;
+
+DELIMITER $$
+
+CREATE TRIGGER data_post_erogazione
+BEFORE INSERT ON Erogazione FOR EACH ROW
+BEGIN
+  IF NEW.Inizio < '2022-09-15' OR NEW.Fine < '2022-09-15' THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Dati inseriti non validi';
+  END IF;
+END $$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS data_post_fattura;
+
+DELIMITER $$
+
+CREATE TRIGGER data_post_fattura
+BEFORE INSERT ON Fattura FOR EACH ROW
+BEGIN
+  IF NEW.Saldo < '2022-09-15' OR NEW.Emissione < '2022-09-15' THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Dati inseriti non validi';
+  END IF;
+END $$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS data_post_recensionecritico;
+
+DELIMITER $$
+
+CREATE TRIGGER data_post_recensionecritico
+BEFORE INSERT ON RecensioneCritico FOR EACH ROW
+BEGIN
+  IF NEW.Data < '2022-09-15' THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Dati inseriti non validi';
+  END IF;
+END $$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS data_post_recensioneutente;
+
+DELIMITER $$
+
+CREATE TRIGGER data_post_recensioneutente
+BEFORE INSERT ON RecensioneUtente FOR EACH ROW
+BEGIN
+  IF NEW.Data < '2022-09-15' THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Dati inseriti non validi';
+  END IF;
+END $$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS data_post_utente;
+
+DELIMITER $$
+
+CREATE TRIGGER data_post_utente
+BEFORE INSERT ON Utente FOR EACH ROW
+BEGIN
+  IF NEW.Inizio < '2022-09-15' OR NEW.DataNascita > CURRENT_DATE() THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Dati inseriti non validi';
+  END IF;
+END $$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS pos_paese;
+
+DELIMITER $$
+
+CREATE TRIGGER pos_paese
+BEFORE INSERT ON Paese FOR EACH ROW
+BEGIN
+  IF NEW.Latitudine < -100 OR NEW.Latitudine > 100 OR NEW.Longitudine < -100 OR NEW.Longitudine > 100 THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Dati inseriti non validi';
+  END IF;
+END $$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS pos_server;
+
+DELIMITER $$
+
+CREATE TRIGGER pos_server
+BEFORE INSERT ON Server FOR EACH ROW
+BEGIN
+  IF NEW.Latitudine < -100 OR NEW.Latitudine > 100 OR NEW.Longitudine < -100 OR NEW.Longitudine > 100 THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Dati inseriti non validi';
+  END IF;
+END $$
+DELIMITER ;
+
+-- Attributi interi con particolari vincoli di dominio
 DROP TRIGGER IF EXISTS numero_carta;
 
 DELIMITER $$
