@@ -1430,3 +1430,24 @@ BEGIN
 
 END $$
 DELIMITER ;
+
+-- Ogni abbonamento nella tabella Utente deve comparire nella tabella Abbonamento
+DROP TRIGGER IF EXISTS utente_abbonamento_abbonamento;
+
+DELIMITER $$
+
+CREATE TRIGGER utente_abbonamento_abbonamento
+BEFORE INSERT ON Utente FOR EACH ROW
+BEGIN
+  DECLARE temp INT DEFAULT 0;
+  SET temp =
+    (SELECT COUNT(*)
+     FROM Abbonamento A
+     WHERE A.Nome= NEW.Abbonamento
+    );
+  IF temp = 0 and new.CartaDiCredito is not null THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Ogni abbonamento nella tabella Utente deve comparire nella tabella Abbonamento
+
+END $$
+DELIMITER ;
