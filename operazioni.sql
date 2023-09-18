@@ -491,6 +491,7 @@ begin
             inner join connessione conn on conn.Inizio = e.Inizio
             and conn.Dispositivo = e.Dispositivo
             where conn.Utente = 1;
+            drop temporary table if exists `Provvisoria`;
             create temporary table `Provvisoria`(
                 `Film` INT NOT NULL,
             `Storico` DOUBLE NOT NULL,
@@ -608,6 +609,7 @@ begin
     select Latitudine, Longitudine into latitudine_p, longitudine_p
     from paese
     where Nome = paese_di_connessione;
+    drop temporary table if exists provvisoria_server;
     create temporary table provvisoria_server (
         `Server` int not null,
         `Chi` double not null
@@ -615,14 +617,14 @@ begin
     open c;
     scan: loop
         fetch c into s;
+        if finito = 1
+            then leave scan;
+        end if;
         select ser.Jitter, ser.Latitudine, ser.Longitudine, ser.BandaDisponibile into jitter, latitudine_s, longitudine_s, bandadisponibile
         from server ser
         where ser.Id = s;
         set chi = bandadisponibile/(power(power((latitudine_s-latitudine_p),2)+power((longitudine_s-longitudine_p),2), 0.5))/jitter;
         insert into provvisoria_server values (s, chi);
-        if finito = 1
-            then leave scan;
-        end if;
     end loop;
     close c;
     select p.Server
@@ -893,11 +895,10 @@ DROP PROCEDURE IF EXISTS registrazione_utente;
 DELIMITER $$
 CREATE PROCEDURE registrazione_utente (IN _nome VARCHAR(255), _cognome VARCHAR(255), _email VARCHAR(255), _password VARCHAR(255), _nazionalita VARCHAR(45), _datanascita DATE, OUT _check BOOL)
 	BEGIN
-		DECLARE temp1, temp2 INT;
+		DECLARE temp1 INT;
         SET temp1 = (SELECT COUNT(*) FROM utente U WHERE U.Email = _email);
-        SET temp2 = (SELECT COUNT(*) FROM paese P WHERE P.Nome = _nazionalita);
 
-        IF temp1 = 1 OR temp2 = 0 OR _datanascita > CURRENT_DATE OR _email not like '%@%.%'THEN
+        IF temp1 = 1 OR _datanascita > CURRENT_DATE OR _email not like '%@%.%'THEN
 			SET _check = FALSE;
 		ELSE
 			INSERT INTO Utente(Nome, Cognome, Email, Password, Nazionalita, DataNascita)
@@ -917,26 +918,29 @@ DELIMITER $$
 
 CREATE PROCEDURE sottoscrizione_servizio (IN _codice INT, _abbonamento VARCHAR(45), _numero BIGINT, _cvv INT, _nome VARCHAR(255), _cognome VARCHAR(255), _mese INT, _anno INT, OUT _check BOOL)
 	BEGIN
-		DECLARE temp1, temp2, etautente, etamin, num_prov INT;
+		DECLARE temp1, temp2, etautente, etamin, num_prov, num_utenti INT;
         DECLARE datanascita DATE;
         SET datanascita = (SELECT U.DataNascita FROM utente U WHERE U.Codice = _codice);
+        SET num_utenti = (SELECT count(*) FROM Utente U WHERE U.Codice = _codice);
         SET temp1 = (SELECT COUNT(*) FROM abbonamento A WHERE A.Nome = _abbonamento);
         SET temp2 = (SELECT COUNT(*) FROM restrizioneabbonamento R WHERE R.Abbonamento = _abbonamento AND R.Paese = (SELECT Nazionalita FROM utente U WHERE U.Codice = _codice));
         SET etamin = (SELECT A.EtaMinima FROM abbonamento A WHERE A.Nome = _abbonamento);
         SET etautente = YEAR(CURRENT_DATE) - YEAR(datanascita);
-        IF temp1 = 0 OR temp2 = 1 OR _numero < 1000000000000000 OR _numero > 9999999999999999 OR _cvv < 100 OR _cvv > 999 OR _mese < 1 OR _mese > 12 OR _anno < YEAR(CURRENT_DATE) OR (_anno = YEAR(CURRENT_DATE) AND _mese <= MONTH(CURRENT_DATE)) OR etautente < etamin THEN
+        IF temp1 = 0 OR temp2 = 1 OR etautente < etamin OR num_utenti = 0 THEN
 			SET _check = FALSE;
 		ELSE
-			UPDATE Utente U
-            SET U.Abbonamento = _abbonamento, U.CartaDiCredito = _numero, U.Inizio = current_date()
-            WHERE U.Codice = _codice;
-            SELECT COUNT(*) into num_prov
+			SELECT COUNT(*) into num_prov
             FROM CartaDiCredito C
             WHERE C.Numero = _numero;
             IF num_prov = 0 THEN
 				INSERT INTO cartadicredito
 				VALUES (_numero, _cvv, _nome, _cognome, _mese, _anno);
 			END IF;
+			UPDATE Utente U
+            SET U.Abbonamento = _abbonamento, U.CartaDiCredito = _numero, U.Inizio = current_date()
+            WHERE U.Codice = _codice;
+           
+			
             SET _check = TRUE;
 		END IF;
     END $$
@@ -1030,13 +1034,13 @@ begin
             select count(*) from Utente U WHERE U.Codice = _recensore into conta_recensore;
     end if;
     SELECT COUNT(*) FROM Film F WHERE F.Id = _film into conta_film;
-    if recensioniprecedenti > 0 OR _voto < 1 OR _voto > 5 OR conta_film = 0 OR conta_recensore = 0 then set check_ = false;
+    if recensioniprecedenti > 0 then set check_ = false;
     else
-        set check_ = true;
         if _critico=1 then
             insert into recensionecritico values(_recensore, _film, current_date, _testo, _voto);
         else insert into recensioneutente values (_recensore, _film, current_date, _testo, _voto);
         end if;
+		set check_ = true;
     end if;
 end $$
 delimiter ;
@@ -1157,6 +1161,7 @@ delimiter $$
         where Server = _server_target
         );
     declare continue handler for not found set finito = 1;
+    drop temporary table if exists provvisoria_bilanciamento;
     create temporary table provvisoria_bilanciamento(
         `Server` int not null,
         `Contenuto` int not null,
