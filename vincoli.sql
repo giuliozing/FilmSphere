@@ -1445,7 +1445,7 @@ BEGIN
      FROM Abbonamento A
      WHERE A.Nome= NEW.Abbonamento
     );
-  IF temp = 0 and new.CartaDiCredito is not null THEN
+  IF temp = 0 and new.Abbonamento is not null THEN
     SIGNAL SQLSTATE '45000'
     SET MESSAGE_TEXT = 'Ogni abbonamento nella tabella Utente deve comparire nella tabella Abbonamento
 
