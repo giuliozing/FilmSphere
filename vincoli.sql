@@ -64,7 +64,7 @@ BEFORE INSERT ON CartaDiCredito FOR EACH ROW
 BEGIN
   IF NEW.AnnoScadenza < 2023 THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Mese di Scadenza Carta di Credito non valido';
+    SET MESSAGE_TEXT = 'Anno di Scadenza Carta di Credito non valido';
   END IF;
 
 END $$
@@ -310,201 +310,6 @@ BEGIN
 
 END $$
 DELIMITER ;
-
--- Altri vincoli interrelazionali
--- Un Artista può comparire nella tabella Interpretazione solo se il suo attributo Attore vale 1
-DROP TRIGGER IF EXISTS interpretazione_artista_1;
-
-DELIMITER $$
-
-CREATE TRIGGER interpretazione_artista_1
-BEFORE INSERT ON Interpretazione FOR EACH ROW
-BEGIN
-  DECLARE artista INT DEFAULT 0;
-  SET artista = 
-    (SELECT A.Attore
-     FROM Artista A
-     WHERE A.Id = NEW.Artista
-    );
-  IF artista = 0 THEN
-    SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Un Artista può comparire nella tabella Interpretazione solo se il suo attributo Attore vale 1';
-  END IF;
-
-END $$
-DELIMITER ;
-
--- Un Artista può comparire nella tabella Direzione solo se il suo attributo Regista vale 1
-DROP TRIGGER IF EXISTS direzione_regista_1;
-
-DELIMITER $$
-
-CREATE TRIGGER direzione_regista_1
-BEFORE INSERT ON Direzione FOR EACH ROW
-BEGIN
-  DECLARE artista INT DEFAULT 0;
-  SET artista = 
-    (SELECT A.Regista
-     FROM Artista A
-     WHERE A.Id = NEW.Artista
-    );
-  IF artista = 0 THEN
-    SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Un Artista può comparire nella tabella Direzione solo se il suo attributo Regista vale 1';
-  END IF;
-
-END $$
-DELIMITER ;
-
--- Un Artista può comparire nella tabella PremiazioneAttore solo se il suo attributo Attore vale 1
-DROP TRIGGER IF EXISTS premiazione_attore_attore_1;
-
-DELIMITER $$
-
-CREATE TRIGGER premiazione_attore_attore_1
-BEFORE INSERT ON PremiazioneAttore FOR EACH ROW
-BEGIN
-  DECLARE artista INT DEFAULT 0;
-  SET artista = 
-    (SELECT A.Attore
-     FROM Artista A
-     WHERE A.Id = NEW.Attore
-    );
-  IF artista = 0 THEN
-    SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Un Artista può comparire nella tabella PremiazioneAttore solo se il suo attributo Attore vale 1';
-  END IF;
-
-END $$
-DELIMITER ;
-
--- Un Premio può comparire nella tabella PremiazioneAttore solo se il suo attributo Attore vale 1
-DROP TRIGGER IF EXISTS premiazione_attore_premio_1;
-
-DELIMITER $$
-
-CREATE TRIGGER premiazione_attore_premio_1
-BEFORE INSERT ON PremiazioneAttore FOR EACH ROW
-BEGIN
-  DECLARE premio INT DEFAULT 0;
-  SET premio = 
-    (SELECT P.Attore
-     FROM Premio P
-     WHERE P.Id = NEW.Premio
-    );
-  IF premio = 0 THEN
-    SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Un Premio può comparire nella tabella PremiazioneAttore solo se il suo attributo Attore vale 1';
-  END IF;
-
-END $$
-DELIMITER ;
-
--- Un Premio può comparire nella tabella PremiazioneFilm solo se il suo attributo Film vale 1
-DROP TRIGGER IF EXISTS premiazione_film_1;
-
-DELIMITER $$
-
-CREATE TRIGGER premiazione_film_1
-BEFORE INSERT ON PremiazioneFilm FOR EACH ROW
-BEGIN
-  DECLARE premio INT DEFAULT 0;
-  SET premio = 
-    (SELECT P.Film
-     FROM Premio P
-     WHERE P.Id = NEW.Premio
-    );
-  IF premio = 0 THEN
-    SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Un Premio può comparire nella tabella PremiazioneFilm solo se il suo attributo Film vale 1';
-  END IF;
-
-END $$
-DELIMITER ;
-
--- Un Artista può comparire nella tabella PremiazioneRegista solo se il suo attributo Regista vale 1
-DROP TRIGGER IF EXISTS premiazione_regista_regista_1;
-
-DELIMITER $$
-
-CREATE TRIGGER premiazione_regista_regista_1
-BEFORE INSERT ON PremiazioneRegista FOR EACH ROW
-BEGIN
-  DECLARE artista INT DEFAULT 0;
-  SET artista = 
-    (SELECT A.Regista
-     FROM Artista A
-     WHERE A.Id = NEW.Regista
-    );
-  IF artista = 0 THEN
-    SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Un Artista può comparire nella tabella PremiazioneRegista solo se il suo attributo Regista vale 1';
-  END IF;
-
-END $$
-DELIMITER ;
-
--- Un Premio può comparire nella tabella PremiazioneRegista solo se il suo attributo Regista vale 1
-DROP TRIGGER IF EXISTS premiazione_regista_premio_1;
-
-DELIMITER $$
-
-CREATE TRIGGER premiazione_regista_premio_1
-BEFORE INSERT ON PremiazioneRegista FOR EACH ROW
-BEGIN
-  DECLARE premio INT DEFAULT 0;
-  SET premio = 
-    (SELECT P.Regista
-     FROM Premio P
-     WHERE P.Id = NEW.Premio
-    );
-  IF premio = 0 THEN
-    SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Un Premio può comparire nella tabella PremiazioneRegista solo se il suo attributo Regista vale 1';
-  END IF;
-
-END $$
-DELIMITER ;
-
-
--- un contenuto può comparire nella tabella CodificaVideo solo se ha l'attributo CodificaAudio nullo
-
-drop trigger if exists codifica_video_codifica_audio;
-delimiter $$
-create trigger codifica_video_codifica_audio
-    before insert on codificavideo
-    for each row
-    begin
-        declare cAudio int default 0;
-        select CodificaAudio into cAudio
-        from contenuto
-        where Id = new.Contenuto;
-        if cAudio is not null then
-            SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Un contenuto può comparire nella tabella CodificaVideo solo se il suo attributo CodificaAudio è nullo';
-        end if;
-    end $$
-    delimiter ;
-
--- Un contenuto può comparire nella tabella Sottotitoli solo se il suo attributo LinguaAudio è nullo
-
-drop trigger if exists doppiaggio_sottotitoli;
-delimiter $$
-create trigger doppiaggio_sottotitoli
-    before insert on sottotitoli
-    for each row
-    begin
-        declare lAudio varchar(45) default '';
-        select LinguaAudio into lAudio
-        from contenuto where Id = new.Contenuto;
-        if lAudio is not null then
-            SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Un contenuto può comparire nella tabella Sottotitoli solo se il suo attributo LinguaAudio è nullo';
-        end if ;
-    end $$
-
-delimiter ;
-
 
 -- Vincoli di integrità referenziale
 -- Ogni film in Appartenenza deve comparire nella tabella Film
@@ -1447,7 +1252,200 @@ BEGIN
     );
   IF temp = 0 and new.Abbonamento is not null THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Ogni abbonamento nella tabella Utente deve comparire nella tabella Abbonamento
+    SET MESSAGE_TEXT = 'Ogni abbonamento nella tabella Utente deve comparire nella tabella Abbonamento';
+  END IF;
+END $$
+DELIMITER ;
+-- Altri vincoli interrelazionali
+-- Un Artista può comparire nella tabella Interpretazione solo se il suo attributo Attore vale 1
+DROP TRIGGER IF EXISTS interpretazione_artista_1;
+
+DELIMITER $$
+
+CREATE TRIGGER interpretazione_artista_1
+BEFORE INSERT ON Interpretazione FOR EACH ROW
+BEGIN
+  DECLARE artista INT DEFAULT 0;
+  SET artista = 
+    (SELECT A.Attore
+     FROM Artista A
+     WHERE A.Id = NEW.Artista
+    );
+  IF artista = 0 THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Un Artista può comparire nella tabella Interpretazione solo se il suo attributo Attore vale 1';
+  END IF;
 
 END $$
 DELIMITER ;
+
+-- Un Artista può comparire nella tabella Direzione solo se il suo attributo Regista vale 1
+DROP TRIGGER IF EXISTS direzione_regista_1;
+
+DELIMITER $$
+
+CREATE TRIGGER direzione_regista_1
+BEFORE INSERT ON Direzione FOR EACH ROW
+BEGIN
+  DECLARE artista INT DEFAULT 0;
+  SET artista = 
+    (SELECT A.Regista
+     FROM Artista A
+     WHERE A.Id = NEW.Artista
+    );
+  IF artista = 0 THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Un Artista può comparire nella tabella Direzione solo se il suo attributo Regista vale 1';
+  END IF;
+
+END $$
+DELIMITER ;
+
+-- Un Artista può comparire nella tabella PremiazioneAttore solo se il suo attributo Attore vale 1
+DROP TRIGGER IF EXISTS premiazione_attore_attore_1;
+
+DELIMITER $$
+
+CREATE TRIGGER premiazione_attore_attore_1
+BEFORE INSERT ON PremiazioneAttore FOR EACH ROW
+BEGIN
+  DECLARE artista INT DEFAULT 0;
+  SET artista = 
+    (SELECT A.Attore
+     FROM Artista A
+     WHERE A.Id = NEW.Attore
+    );
+  IF artista = 0 THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Un Artista può comparire nella tabella PremiazioneAttore solo se il suo attributo Attore vale 1';
+  END IF;
+
+END $$
+DELIMITER ;
+
+-- Un Premio può comparire nella tabella PremiazioneAttore solo se il suo attributo Attore vale 1
+DROP TRIGGER IF EXISTS premiazione_attore_premio_1;
+
+DELIMITER $$
+
+CREATE TRIGGER premiazione_attore_premio_1
+BEFORE INSERT ON PremiazioneAttore FOR EACH ROW
+BEGIN
+  DECLARE premio INT DEFAULT 0;
+  SET premio = 
+    (SELECT P.Attore
+     FROM Premio P
+     WHERE P.Id = NEW.Premio
+    );
+  IF premio = 0 THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Un Premio può comparire nella tabella PremiazioneAttore solo se il suo attributo Attore vale 1';
+  END IF;
+
+END $$
+DELIMITER ;
+
+-- Un Premio può comparire nella tabella PremiazioneFilm solo se il suo attributo Film vale 1
+DROP TRIGGER IF EXISTS premiazione_film_1;
+
+DELIMITER $$
+
+CREATE TRIGGER premiazione_film_1
+BEFORE INSERT ON PremiazioneFilm FOR EACH ROW
+BEGIN
+  DECLARE premio INT DEFAULT 0;
+  SET premio = 
+    (SELECT P.Film
+     FROM Premio P
+     WHERE P.Id = NEW.Premio
+    );
+  IF premio = 0 THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Un Premio può comparire nella tabella PremiazioneFilm solo se il suo attributo Film vale 1';
+  END IF;
+
+END $$
+DELIMITER ;
+
+-- Un Artista può comparire nella tabella PremiazioneRegista solo se il suo attributo Regista vale 1
+DROP TRIGGER IF EXISTS premiazione_regista_regista_1;
+
+DELIMITER $$
+
+CREATE TRIGGER premiazione_regista_regista_1
+BEFORE INSERT ON PremiazioneRegista FOR EACH ROW
+BEGIN
+  DECLARE artista INT DEFAULT 0;
+  SET artista = 
+    (SELECT A.Regista
+     FROM Artista A
+     WHERE A.Id = NEW.Regista
+    );
+  IF artista = 0 THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Un Artista può comparire nella tabella PremiazioneRegista solo se il suo attributo Regista vale 1';
+  END IF;
+
+END $$
+DELIMITER ;
+
+-- Un Premio può comparire nella tabella PremiazioneRegista solo se il suo attributo Regista vale 1
+DROP TRIGGER IF EXISTS premiazione_regista_premio_1;
+
+DELIMITER $$
+
+CREATE TRIGGER premiazione_regista_premio_1
+BEFORE INSERT ON PremiazioneRegista FOR EACH ROW
+BEGIN
+  DECLARE premio INT DEFAULT 0;
+  SET premio = 
+    (SELECT P.Regista
+     FROM Premio P
+     WHERE P.Id = NEW.Premio
+    );
+  IF premio = 0 THEN
+    SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Un Premio può comparire nella tabella PremiazioneRegista solo se il suo attributo Regista vale 1';
+  END IF;
+
+END $$
+DELIMITER ;
+
+
+-- un contenuto può comparire nella tabella CodificaVideo solo se ha l'attributo CodificaAudio nullo
+
+drop trigger if exists codifica_video_codifica_audio;
+delimiter $$
+create trigger codifica_video_codifica_audio
+    before insert on codificavideo
+    for each row
+    begin
+        declare cAudio int default 0;
+        select CodificaAudio into cAudio
+        from contenuto
+        where Id = new.Contenuto;
+        if cAudio is not null then
+            SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Un contenuto può comparire nella tabella CodificaVideo solo se il suo attributo CodificaAudio è nullo';
+        end if;
+    end $$
+    delimiter ;
+
+-- Un contenuto può comparire nella tabella Sottotitoli solo se il suo attributo LinguaAudio è nullo
+
+drop trigger if exists doppiaggio_sottotitoli;
+delimiter $$
+create trigger doppiaggio_sottotitoli
+    before insert on sottotitoli
+    for each row
+    begin
+        declare lAudio varchar(45) default '';
+        select LinguaAudio into lAudio
+        from contenuto where Id = new.Contenuto;
+        if lAudio is not null then
+            SIGNAL SQLSTATE '45000'
+    SET MESSAGE_TEXT = 'Un contenuto può comparire nella tabella Sottotitoli solo se il suo attributo LinguaAudio è nullo';
+        end if ;
+    end $$
+
+delimiter ;
