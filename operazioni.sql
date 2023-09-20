@@ -1375,20 +1375,8 @@ DELIMITER $$
 
 CREATE PROCEDURE fine_erogazione (IN _id INT, _fine DATETIME)
 	BEGIN
-		DECLARE dim BIGINT;
-	        DECLARE dur INT;
-	        SELECT C.Dimensione, C.Lunghezza INTO dim, dur
-	        FROM Contenuto C
-	        WHERE C.Id = (SELECT E.Contenuto
-			      FROM Erogazione E
-	                      WHERE E.Id = _id);
 		UPDATE Erogazione E
 	        SET E.Fine = _fine
 	        WHERE E.Id = _id;
-	        UPDATE Server S
-	        SET S.BandaDisponibile = S.BandaDisponibile + (dim/dur)
-	        WHERE S.Id = (SELECT E.Server
-			      FROM Erogazione E
-	                      WHERE E.Id = _id);
     END $$
 DELIMITER ;
