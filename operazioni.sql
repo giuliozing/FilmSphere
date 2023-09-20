@@ -490,7 +490,7 @@ begin
         select count(*) into visualizzazioni_totali from contenuto c inner join erogazione e on c.Id = e.Contenuto
             inner join connessione conn on conn.Inizio = e.Inizio
             and conn.Dispositivo = e.Dispositivo
-            where conn.Utente = 1;
+            where conn.Utente = _utente;
             drop temporary table if exists `Provvisoria`;
             create temporary table `Provvisoria`(
                 `Film` INT NOT NULL,
